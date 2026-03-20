@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Depósito del 72</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg: #0a0a0a; --bg2: #111; --bg3: #1a1a1a;
+      --border: #222; --text: #e8e0d4; --text-muted: #666; --text-dim: #999;
+      --accent: #c8a96e; --accent2: #e8623a; --white: #f5f0e8;
+      --green: #4caf7d; --red: #e8623a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; font-weight: 300; min-height: 100vh; }
+
+    /* LOGIN */
+    .login-wrap { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; }
+    .login-box { width: 100%; max-width: 380px; }
+    .login-logo { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 0.12em; color: var(--white); margin-bottom: 0.2rem; }
+    .login-sub { font-family: 'Barlow Condensed', sans-serif; font-size: 0.6rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; margin-bottom: 2.5rem; }
+    .login-title { font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+    .field { margin-bottom: 1rem; }
+    .field label { display: block; font-family: 'Barlow Condensed', sans-serif; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.4rem; }
+    .field input, .field select, .field textarea {
+      width: 100%; background: var(--bg2); border: 1px solid var(--border);
+      color: var(--text); padding: 0.75rem 1rem; font-family: 'Barlow', sans-serif;
+      font-size: 0.85rem; outline: none; transition: border-color 0.2s;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); }
+    .field textarea { resize: vertical; min-height: 80px; }
+    .field select option { background: var(--bg2); }
+
+    .btn { width: 100%; background: var(--accent); border: none; color: var(--bg); padding: 0.9rem; font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 0.2em; cursor: pointer; transition: background 0.2s; }
+    .btn:hover { background: var(--white); }
+    .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.6rem 1.2rem; cursor: pointer; transition: all 0.2s; }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-danger { background: transparent; border: 1px solid var(--red); color: var(--red); font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.4rem 0.8rem; cursor: pointer; transition: all 0.2s; }
+    .btn-danger:hover { background: var(--red); color: white; }
+    .btn-sm { padding: 0.4rem 0.9rem; font-size: 0.65rem; letter-spacing: 0.12em; width: auto; }
+
+    .err { color: var(--red); font-size: 0.75rem; margin-top: 0.5rem; text-align: center; }
+    .hidden { display: none !important; }
+
+    /* ADMIN LAYOUT */
+    .admin-layout { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+
+    .sidebar { background: var(--bg2); border-right: 1px solid var(--border); padding: 1.5rem; display: flex; flex-direction: column; gap: 0; position: sticky; top: 0; height: 100vh; }
+    .sidebar-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.1em; color: var(--white); margin-bottom: 0.2rem; }
+    .sidebar-sub { font-family: 'Barlow Condensed', sans-serif; font-size: 0.5rem; letter-spacing: 0.25em; color: var(--accent); text-transform: uppercase; margin-bottom: 2rem; }
+    .nav-item { display: flex; align-items: center; gap: 0.7rem; padding: 0.7rem 0.8rem; font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); cursor: pointer; transition: all 0.15s; border-left: 2px solid transparent; margin-bottom: 0.2rem; }
+    .nav-item:hover { color: var(--text); background: var(--bg3); }
+    .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: var(--bg3); }
+    .sidebar-spacer { flex: 1; }
+    .sidebar-user { font-size: 0.7rem; color: var(--text-muted); padding: 0.8rem; border-top: 1px solid var(--border); }
+    .sidebar-user small { display: block; font-size: 0.6rem; color: var(--text-muted); margin-bottom: 0.5rem; word-break: break-all; }
+
+    .main { padding: 2.5rem; overflow-y: auto; }
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .page-header { margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; }
+    .page-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 0.08em; color: var(--white); }
+    .page-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+    /* STATS */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2.5rem; }
+    .stat-card { background: var(--bg2); border: 1px solid var(--border); padding: 1.5rem; }
+    .stat-card-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--white); line-height: 1; }
+    .stat-card-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-top: 0.3rem; }
+    .stat-card-accent { color: var(--accent); }
+
+    /* PRODUCTS TABLE */
+    .table-wrap { background: var(--bg2); border: 1px solid var(--border); overflow: hidden; }
+    .table-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .table-title { font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-muted); }
+    table { width: 100%; border-collapse: collapse; }
+    th { font-family: 'Barlow Condensed', sans-serif; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); text-align: left; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-weight: 600; }
+    td { padding: 0.85rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--bg3); }
+    .td-img { width: 44px; height: 56px; object-fit: cover; background: var(--bg3); }
+    .td-img-placeholder { width: 44px; height: 56px; background: var(--bg3); display: flex; align-items: center; justify-content: center; font-size: 0.55rem; color: var(--text-muted); font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.05em; }
+    .badge { display: inline-block; padding: 0.15rem 0.5rem; font-family: 'Barlow Condensed', sans-serif; font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; }
+    .badge-green { background: rgba(76,175,125,0.15); color: var(--green); border: 1px solid rgba(76,175,125,0.3); }
+    .badge-red { background: rgba(232,98,58,0.15); color: var(--red); border: 1px solid rgba(232,98,58,0.3); }
+    .badge-accent { background: rgba(200,169,110,0.15); color: var(--accent); border: 1px solid rgba(200,169,110,0.3); }
+    .td-actions { display: flex; gap: 0.5rem; align-items: center; }
+
+    /* MODAL */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 500; display: flex; align-items: center; justify-content: center; padding: 1rem; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal { background: var(--bg2); border: 1px solid var(--border); width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; }
+    .modal-header { padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--bg2); z-index: 1; }
+    .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.08em; }
+    .modal-close { background: none; border: 1px solid var(--border); color: var(--text); width: 30px; height: 30px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+    .modal-close:hover { border-color: var(--red); color: var(--red); }
+    .modal-body { padding: 1.5rem; }
+    .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; gap: 0.75rem; justify-content: flex-end; }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-grid .full { grid-column: 1 / -1; }
+
+    /* IMAGE UPLOAD */
+    .img-upload { border: 2px dashed var(--border); padding: 2rem; text-align: center; transition: border-color 0.2s; cursor: pointer; position: relative; }
+    .img-upload:hover { border-color: var(--accent); }
+    .img-upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .img-upload-text { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); }
+    .img-preview { width: 100%; max-height: 200px; object-fit: cover; margin-top: 1rem; }
+
+    /* NOTIF */
+    .notif { position: fixed; bottom: 2rem; right: 2rem; background: var(--green); color: white; padding: 0.75rem 1.5rem; font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; z-index: 600; transform: translateY(100px); opacity: 0; transition: all 0.3s; }
+    .notif.show { transform: translateY(0); opacity: 1; }
+    .notif.error { background: var(--red); }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; vertical-align: middle; }
+    .loading-row td { text-align: center; padding: 3rem; color: var(--text-muted); }
+
+    .talles-input { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem; }
+    .talle-chip { border: 1px solid var(--border); padding: 0.25rem 0.6rem; font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; letter-spacing: 0.08em; cursor: pointer; transition: all 0.15s; user-select: none; }
+    .talle-chip.selected { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 700; }
+
+    .toggle { display: flex; align-items: center; gap: 0.6rem; cursor: pointer; }
+    .toggle input { display: none; }
+    .toggle-track { width: 36px; height: 20px; background: var(--border); border-radius: 10px; position: relative; transition: background 0.2s; }
+    .toggle input:checked + .toggle-track { background: var(--accent); }
+    .toggle-thumb { width: 14px; height: 14px; background: white; border-radius: 50%; position: absolute; top: 3px; left: 3px; transition: left 0.2s; }
+    .toggle input:checked + .toggle-track .toggle-thumb { left: 19px; }
+    .toggle-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-box">
+    <div class="login-logo">DEP.72</div>
+    <div class="login-sub">Panel de Administración</div>
+    <div class="login-title">Ingresá con tu cuenta</div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="loginEmail" placeholder="admin@depositodel72.com" />
+    </div>
+    <div class="field">
+      <label>Contraseña</label>
+      <input type="password" id="loginPass" placeholder="••••••••" />
+    </div>
+    <div class="err hidden" id="loginErr"></div>
+    <br/>
+    <button class="btn" id="loginBtn">INGRESAR</button>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-layout hidden" id="adminPanel">
+  <div class="sidebar">
+    <div class="sidebar-logo">DEP.72</div>
+    <div class="sidebar-sub">Admin</div>
+    <div class="nav-item active" data-page="dashboard">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" data-page="productos">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+      Productos
+    </div>
+    <div class="nav-item" data-page="pedidos">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      Pedidos
+    </div>
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-user">
+      <small id="userEmail">—</small>
+      <button class="btn-ghost" style="width:100%" id="logoutBtn">Cerrar sesión</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div>
+          <div class="page-title">DASHBOARD</div>
+          <div class="page-sub">Bienvenido al panel de Depósito del 72</div>
+        </div>
+        <a href="index.html" target="_blank" class="btn-ghost">Ver tienda →</a>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-num stat-card-accent" id="statTotal">—</div>
+          <div class="stat-card-label">Productos activos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-num stat-card-accent" id="statDestacados">—</div>
+          <div class="stat-card-label">Best Sellers</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-num stat-card-accent" id="statSinStock">—</div>
+          <div class="stat-card-label">Unidades sin stock</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-num stat-card-accent" id="statPedidos">—</div>
+          <div class="stat-card-label">Unidades en stock</div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header"><span class="table-title">Últimos productos agregados</span></div>
+        <table>
+          <thead><tr><th>Foto</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th></tr></thead>
+          <tbody id="dashRecentBody"><tr class="loading-row"><td colspan="5"><span class="spinner"></span></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PRODUCTOS -->
+    <div class="page" id="page-productos">
+      <div class="page-header">
+        <div>
+          <div class="page-title">PRODUCTOS</div>
+          <div class="page-sub" id="productosSub">Cargando...</div>
+        </div>
+        <button class="btn btn-sm" id="nuevoProductoBtn">+ Nuevo Producto</button>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header">
+          <span class="table-title">Todos los productos</span>
+          <input type="text" id="adminSearch" placeholder="Buscar producto..." style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:0.3rem 0.7rem;font-family:'Barlow',sans-serif;font-size:0.75rem;outline:none;width:200px;" />
+        </div>
+        <table>
+          <thead><tr><th>Foto</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody id="productosBody"><tr class="loading-row"><td colspan="7"><span class="spinner"></span></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PEDIDOS -->
+    <div class="page" id="page-pedidos">
+      <div class="page-header">
+        <div><div class="page-title">PEDIDOS</div><div class="page-sub">Historial de órdenes</div></div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header"><span class="table-title">Pedidos recientes</span></div>
+        <table>
+          <thead><tr><th>Fecha</th><th>Cliente</th><th>Total</th><th>Estado</th></tr></thead>
+          <tbody id="pedidosBody"><tr class="loading-row"><td colspan="4" style="text-align:center;padding:3rem;color:var(--text-muted);">Los pedidos aparecerán aquí cuando se conecte Mercado Pago (Etapa 3).</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL NUEVO/EDITAR PRODUCTO -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle">NUEVO PRODUCTO</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field full">
+          <label>Foto del producto</label>
+          <div class="img-upload" id="imgUploadArea">
+            <input type="file" id="imgInput" accept="image/*" />
+            <div class="img-upload-text" id="imgUploadText">📷 Tocá para subir una foto</div>
+            <img class="img-preview hidden" id="imgPreview" />
+          </div>
+        </div>
+        <div class="field full">
+          <label>Nombre *</label>
+          <input type="text" id="fNombre" placeholder="Ej: Sweater Lacoste Rojo" />
+        </div>
+        <div class="field">
+          <label>Categoría *</label>
+          <select id="fCategoria">
+            <option value="sweater">Sweater</option>
+            <option value="jean">Jean</option>
+            <option value="campera">Campera</option>
+            <option value="remera">Remera</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Marca</label>
+          <input type="text" id="fMarca" placeholder="Ej: Lacoste" />
+        </div>
+        <div class="field">
+          <label>Precio (ARS) *</label>
+          <input type="number" id="fPrecio" placeholder="85000" />
+        </div>
+        <div class="field">
+          <label>Stock</label>
+          <input type="number" id="fStock" placeholder="1" value="1" min="0" />
+        </div>
+        <div class="field full">
+          <label>Descripción</label>
+          <textarea id="fDescripcion" placeholder="Describe la prenda, su estado, detalles..."></textarea>
+        </div>
+        <div class="field full">
+          <label>Talles disponibles</label>
+          <div class="talles-input" id="tallesInput"></div>
+        </div>
+        <div class="field full" style="display:flex;gap:2rem;">
+          <label class="toggle">
+            <input type="checkbox" id="fDestacado" />
+            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            <span class="toggle-label">Best Seller</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="fActivo" checked />
+            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            <span class="toggle-label">Visible en tienda</span>
+          </label>
+        </div>
+      </div>
+      <div class="err hidden" id="modalErr"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-sm" id="saveBtn">GUARDAR PRODUCTO</button>
+    </div>
+  </div>
+</div>
+
+<div class="notif" id="notif"></div>
+
+<script>
+  const SUPABASE_URL = 'https://alazhwetaskvkmzoypql.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsYXpod2V0YXNrdmttem95cHFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMTk1NDcsImV4cCI6MjA4OTU5NTU0N30.sHXIT35k8XaHqBBqrqwbRsanhojwhwmBWp2I8Mf1LLA';
+  const { createClient } = supabase;
+  const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  let editingId = null;
+  let selectedTalles = [];
+  let selectedImageFile = null;
+  let allProductsAdmin = [];
+
+  const TALLES_OPTIONS = ['XS','S','M','L','XL','XXL','28','30','32','34','36','38','40','42','44','Único'];
+
+  // NOTIF
+  function showNotif(msg, isError = false) {
+    const n = document.getElementById('notif');
+    n.textContent = msg;
+    n.className = 'notif show' + (isError ? ' error' : '');
+    setTimeout(() => n.classList.remove('show'), 3000);
+  }
+
+  // AUTH
+  document.getElementById('loginBtn').addEventListener('click', async () => {
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass = document.getElementById('loginPass').value;
+    const errEl = document.getElementById('loginErr');
+    errEl.classList.add('hidden');
+    if (!email || !pass) { errEl.textContent = 'Completá email y contraseña.'; errEl.classList.remove('hidden'); return; }
+    const btn = document.getElementById('loginBtn');
+    btn.textContent = 'INGRESANDO...';
+    btn.disabled = true;
+    const { error } = await sb.auth.signInWithPassword({ email, password: pass });
+    if (error) {
+      errEl.textContent = 'Email o contraseña incorrectos.';
+      errEl.classList.remove('hidden');
+      btn.textContent = 'INGRESAR'; btn.disabled = false;
+    }
+  });
+
+  document.getElementById('loginEmail').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('loginPass').focus(); });
+  document.getElementById('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('loginBtn').click(); });
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await sb.auth.signOut();
+  });
+
+  sb.auth.onAuthStateChange((event, session) => {
+    if (session) {
+      document.getElementById('loginWrap').classList.add('hidden');
+      document.getElementById('adminPanel').classList.remove('hidden');
+      document.getElementById('userEmail').textContent = session.user.email;
+      loadDashboard();
+      loadProductosAdmin();
+    } else {
+      document.getElementById('loginWrap').classList.remove('hidden');
+      document.getElementById('adminPanel').classList.add('hidden');
+      document.getElementById('loginBtn').textContent = 'INGRESAR';
+      document.getElementById('loginBtn').disabled = false;
+    }
+  });
+
+  // NAVIGATION
+  document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      item.classList.add('active');
+      document.getElementById('page-' + item.dataset.page).classList.add('active');
+    });
+  });
+
+  // FORMAT
+  function formatPrice(n) { return '$' + Number(n).toLocaleString('es-AR'); }
+  function formatDate(d) { return new Date(d).toLocaleDateString('es-AR'); }
+
+  function getImageUrl(path) {
+    if (!path) return null;
+    if (path.startsWith('http')) return path;
+    const { data } = sb.storage.from('productos').getPublicUrl(path);
+    return data.publicUrl;
+  }
+
+  // DASHBOARD
+  async function loadDashboard() {
+    const [{ data: prods }] = await Promise.all([
+      sb.from('productos').select('*').eq('activo', true)
+    ]);
+    const p = prods || [];
+    document.getElementById('statTotal').textContent = p.length;
+    document.getElementById('statDestacados').textContent = p.filter(x => x.destacado).length;
+    document.getElementById('statSinStock').textContent = p.filter(x => x.stock === 0).length;
+    document.getElementById('statPedidos').textContent = p.reduce((a, x) => a + (x.stock || 0), 0);
+
+    const recent = [...p].sort((a,b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 5);
+    const tbody = document.getElementById('dashRecentBody');
+    tbody.innerHTML = recent.map(p => `
+      <tr>
+        <td>${getImageUrl(p.imagen_url) ? `<img class="td-img" src="${getImageUrl(p.imagen_url)}" />` : `<div class="td-img-placeholder">SIN<br>FOTO</div>`}</td>
+        <td><strong style="color:var(--white)">${p.nombre}</strong>${p.marca ? `<br><small style="color:var(--text-muted)">${p.marca}</small>` : ''}</td>
+        <td><span class="badge badge-accent">${p.categoria}</span></td>
+        <td style="font-family:'Bebas Neue';font-size:1rem;">${formatPrice(p.precio)}</td>
+        <td><span class="badge ${p.stock > 0 ? 'badge-green' : 'badge-red'}">${p.stock > 0 ? p.stock + ' disponible' : 'sin stock'}</span></td>
+      </tr>
+    `).join('');
+  }
+
+  // PRODUCTOS LIST
+  async function loadProductosAdmin() {
+    const { data } = await sb.from('productos').select('*').order('created_at', { ascending: false });
+    allProductsAdmin = data || [];
+    renderProductosTable(allProductsAdmin);
+    document.getElementById('productosSub').textContent = `${allProductsAdmin.length} productos en total`;
+  }
+
+  function renderProductosTable(products) {
+    const tbody = document.getElementById('productosBody');
+    if (products.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:3rem;color:var(--text-muted);">No hay productos todavía. ¡Agregá el primero!</td></tr>';
+      return;
+    }
+    tbody.innerHTML = products.map(p => `
+      <tr>
+        <td>${getImageUrl(p.imagen_url) ? `<img class="td-img" src="${getImageUrl(p.imagen_url)}" />` : `<div class="td-img-placeholder">SIN<br>FOTO</div>`}</td>
+        <td><strong style="color:var(--white);font-size:0.85rem">${p.nombre}</strong>${p.marca ? `<br><small style="color:var(--text-muted)">${p.marca}</small>` : ''}</td>
+        <td><span class="badge badge-accent">${p.categoria}</span></td>
+        <td style="font-family:'Bebas Neue';font-size:1rem;">${formatPrice(p.precio)}</td>
+        <td><span class="badge ${p.stock > 0 ? 'badge-green' : 'badge-red'}">${p.stock}</span></td>
+        <td>
+          ${p.activo ? '<span class="badge badge-green">Activo</span>' : '<span class="badge badge-red">Oculto</span>'}
+          ${p.destacado ? '&nbsp;<span class="badge badge-accent">★ Best</span>' : ''}
+        </td>
+        <td>
+          <div class="td-actions">
+            <button class="btn-ghost" style="padding:0.3rem 0.7rem;font-size:0.6rem" onclick="editProducto('${p.id}')">Editar</button>
+            <button class="btn-danger" onclick="deleteProducto('${p.id}', '${p.nombre.replace(/'/g,"\\'")}')">✕</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  // SEARCH ADMIN
+  document.getElementById('adminSearch').addEventListener('input', e => {
+    const q = e.target.value.toLowerCase();
+    if (!q) { renderProductosTable(allProductsAdmin); return; }
+    renderProductosTable(allProductsAdmin.filter(p =>
+      p.nombre.toLowerCase().includes(q) || p.categoria.includes(q) || (p.marca && p.marca.toLowerCase().includes(q))
+    ));
+  });
+
+  // TALLES
+  function renderTalles() {
+    const container = document.getElementById('tallesInput');
+    container.innerHTML = TALLES_OPTIONS.map(t => `
+      <div class="talle-chip ${selectedTalles.includes(t) ? 'selected' : ''}" onclick="toggleTalle('${t}')">${t}</div>
+    `).join('');
+  }
+  function toggleTalle(t) {
+    if (selectedTalles.includes(t)) selectedTalles = selectedTalles.filter(x => x !== t);
+    else selectedTalles.push(t);
+    renderTalles();
+  }
+
+  // IMAGE PREVIEW
+  document.getElementById('imgInput').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    selectedImageFile = file;
+    const url = URL.createObjectURL(file);
+    const preview = document.getElementById('imgPreview');
+    preview.src = url;
+    preview.classList.remove('hidden');
+    document.getElementById('imgUploadText').textContent = '✓ ' + file.name;
+  });
+
+  // MODAL
+  function openModal(producto = null) {
+    editingId = producto ? producto.id : null;
+    selectedTalles = producto ? (producto.talles || []) : [];
+    selectedImageFile = null;
+
+    document.getElementById('modalTitle').textContent = producto ? 'EDITAR PRODUCTO' : 'NUEVO PRODUCTO';
+    document.getElementById('fNombre').value = producto ? producto.nombre : '';
+    document.getElementById('fCategoria').value = producto ? producto.categoria : 'sweater';
+    document.getElementById('fMarca').value = producto ? (producto.marca || '') : '';
+    document.getElementById('fPrecio').value = producto ? producto.precio : '';
+    document.getElementById('fStock').value = producto ? producto.stock : 1;
+    document.getElementById('fDescripcion').value = producto ? (producto.descripcion || '') : '';
+    document.getElementById('fDestacado').checked = producto ? producto.destacado : false;
+    document.getElementById('fActivo').checked = producto ? producto.activo : true;
+    document.getElementById('modalErr').classList.add('hidden');
+
+    const preview = document.getElementById('imgPreview');
+    const imgUrl = producto ? getImageUrl(producto.imagen_url) : null;
+    if (imgUrl) { preview.src = imgUrl; preview.classList.remove('hidden'); document.getElementById('imgUploadText').textContent = 'Foto actual (subí otra para reemplazar)'; }
+    else { preview.classList.add('hidden'); document.getElementById('imgUploadText').textContent = '📷 Tocá para subir una foto'; }
+
+    renderTalles();
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+  document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target === document.getElementById('modalOverlay')) closeModal(); });
+
+  document.getElementById('nuevoProductoBtn').addEventListener('click', () => openModal());
+
+  function editProducto(id) {
+    const p = allProductsAdmin.find(x => x.id === id);
+    if (p) openModal(p);
+  }
+
+  // SAVE
+  document.getElementById('saveBtn').addEventListener('click', async () => {
+    const nombre = document.getElementById('fNombre').value.trim();
+    const precio = parseInt(document.getElementById('fPrecio').value);
+    const errEl = document.getElementById('modalErr');
+    errEl.classList.add('hidden');
+
+    if (!nombre) { errEl.textContent = 'El nombre es obligatorio.'; errEl.classList.remove('hidden'); return; }
+    if (!precio || precio <= 0) { errEl.textContent = 'El precio debe ser mayor a 0.'; errEl.classList.remove('hidden'); return; }
+
+    const btn = document.getElementById('saveBtn');
+    btn.textContent = 'GUARDANDO...'; btn.disabled = true;
+
+    let imagen_url = editingId ? allProductsAdmin.find(p => p.id === editingId)?.imagen_url : null;
+
+    // Upload image if selected
+    if (selectedImageFile) {
+      const ext = selectedImageFile.name.split('.').pop();
+      const fileName = `${Date.now()}.${ext}`;
+      const { data: uploadData, error: uploadErr } = await sb.storage.from('productos').upload(fileName, selectedImageFile, { upsert: true });
+      if (uploadErr) { errEl.textContent = 'Error subiendo imagen: ' + uploadErr.message; errEl.classList.remove('hidden'); btn.textContent = 'GUARDAR PRODUCTO'; btn.disabled = false; return; }
+      imagen_url = uploadData.path;
+    }
+
+    const payload = {
+      nombre,
+      categoria: document.getElementById('fCategoria').value,
+      marca: document.getElementById('fMarca').value.trim() || null,
+      precio,
+      stock: parseInt(document.getElementById('fStock').value) || 0,
+      descripcion: document.getElementById('fDescripcion').value.trim() || null,
+      talles: selectedTalles,
+      destacado: document.getElementById('fDestacado').checked,
+      activo: document.getElementById('fActivo').checked,
+      imagen_url
+    };
+
+    let error;
+    if (editingId) {
+      ({ error } = await sb.from('productos').update(payload).eq('id', editingId));
+    } else {
+      ({ error } = await sb.from('productos').insert(payload));
+    }
+
+    if (error) {
+      errEl.textContent = 'Error: ' + error.message;
+      errEl.classList.remove('hidden');
+      btn.textContent = 'GUARDAR PRODUCTO'; btn.disabled = false;
+    } else {
+      showNotif(editingId ? 'Producto actualizado ✓' : 'Producto creado ✓');
+      closeModal();
+      await loadProductosAdmin();
+      await loadDashboard();
+      btn.textContent = 'GUARDAR PRODUCTO'; btn.disabled = false;
+    }
+  });
+
+  // DELETE
+  async function deleteProducto(id, nombre) {
+    if (!confirm(`¿Eliminar "${nombre}"? Esta acción no se puede deshacer.`)) return;
+    const { error } = await sb.from('productos').delete().eq('id', id);
+    if (error) { showNotif('Error al eliminar: ' + error.message, true); }
+    else { showNotif('Producto eliminado.'); await loadProductosAdmin(); await loadDashboard(); }
+  }
+</script>
+</body>
+</html>
