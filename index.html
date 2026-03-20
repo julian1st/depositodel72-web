@@ -96,6 +96,12 @@
     .product-price .currency { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; color: var(--text-muted); vertical-align: middle; margin-right: 0.15rem; }
     .product-sizes { display: flex; gap: 0.3rem; margin-top: 0.3rem; }
     .size-tag { border: 1px solid var(--border); color: var(--text-muted); font-family: 'Barlow Condensed', sans-serif; font-size: 0.6rem; letter-spacing: 0.08em; padding: 0.15rem 0.4rem; }
+    .talle-selector { margin-bottom: 0.6rem; }
+    .talle-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.55rem; letter-spacing: 0.2em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.4rem; }
+    .talle-btns { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.5rem; }
+    .talle-select-btn { background: none; border: 1px solid var(--border); color: var(--text-dim); font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; letter-spacing: 0.08em; padding: 0.25rem 0.55rem; cursor: none; transition: all 0.15s; }
+    .talle-select-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .talle-select-btn.selected { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 700; }
     .no-stock { position: absolute; top: 0.8rem; right: 0.8rem; background: rgba(10,10,10,0.8); color: var(--text-muted); font-family: 'Barlow Condensed', sans-serif; font-size: 0.55rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.2rem 0.5rem; border: 1px solid var(--border); }
 
     .loading-grid { grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-muted); font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.2em; font-size: 0.75rem; }
@@ -148,6 +154,18 @@
     .notif.show { transform: translateX(-50%) translateY(0); }
     .product-card.hidden { display: none; }
 
+    /* LIGHTBOX */
+    .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 400; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 1rem; }
+    .lightbox.open { opacity: 1; pointer-events: all; }
+    .lightbox-img { max-width: 90vw; max-height: 90vh; object-fit: contain; transform: scale(0.92); transition: transform 0.3s; }
+    .lightbox.open .lightbox-img { transform: scale(1); }
+    .lightbox-close { position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: 1px solid var(--border); color: var(--white); width: 40px; height: 40px; font-size: 1.1rem; cursor: none; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .lightbox-close:hover { border-color: var(--accent2); color: var(--accent2); }
+    .lightbox-info { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); text-align: center; }
+    .lightbox-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 0.08em; color: var(--white); }
+    .lightbox-price { font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; letter-spacing: 0.15em; color: var(--accent); margin-top: 0.2rem; }
+    .product-img-wrap { cursor: zoom-in; }
+
     @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
@@ -198,7 +216,7 @@
     <p class="hero-sub">Archivo de Leandro Sport, Esquel. Más de 1000 prendas originales. Drops por temporada, envíos a todo el país.</p>
     <div class="hero-actions">
       <a href="#catalogo" class="btn-primary">Ver Catálogo</a>
-      <a href="https://instagram.com/depositodel72__" target="_blank" class="btn-ghost">@depositodel72__</a>
+      <a href="https://instagram.com/depositodel72___" target="_blank" class="btn-ghost">@depositodel72__</a>
     </div>
   </div>
   <div class="hero-scroll">
@@ -277,7 +295,7 @@
   <div>
     <p class="footer-title">Seguinos</p>
     <ul class="footer-links">
-      <li><a href="https://instagram.com/depositodel72__" target="_blank">@depositodel72__</a></li>
+      <li><a href="https://instagram.com/depositodel72___" target="_blank">@depositodel72__</a></li>
       <li><a href="https://instagram.com/leandrosport.esquel" target="_blank">@leandrosport.esquel</a></li>
     </ul>
   </div>
@@ -361,6 +379,31 @@
     if (existing) { existing.qty++; } else { cart.push({ id, name, price, cat, img, qty: 1 }); }
     updateCartUI();
     showNotif('¡' + name + ' agregado!');
+  }
+
+  const selectedTalles = {};
+
+  function selectTalle(btn, productId) {
+    const container = document.getElementById('talles-' + productId);
+    container.querySelectorAll('.talle-select-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedTalles[productId] = btn.textContent;
+  }
+
+  function addToCartWithTalle(id, name, price, cat, img, talles) {
+    if (talles && talles.length > 0) {
+      const talle = selectedTalles[id];
+      if (!talle) { showNotif('¡Elegí un talle primero!'); return; }
+      const fullName = name + ' — Talle ' + talle;
+      const existing = cart.find(i => i.id === id + talle);
+      if (existing) { existing.qty++; } else { cart.push({ id: id + talle, name: fullName, price, cat, img, qty: 1 }); }
+      showNotif('¡' + fullName + ' agregado!');
+    } else {
+      const existing = cart.find(i => i.id === id);
+      if (existing) { existing.qty++; } else { cart.push({ id, name, price, cat, img, qty: 1 }); }
+      showNotif('¡' + name + ' agregado!');
+    }
+    updateCartUI();
   }
   function removeFromCart(idx) { cart.splice(idx, 1); updateCartUI(); }
   function showNotif(msg) {
@@ -472,6 +515,32 @@
   });
 
   loadProducts();
+</script>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="" />
+  <div class="lightbox-info">
+    <div class="lightbox-name" id="lightboxName"></div>
+    <div class="lightbox-price" id="lightboxPrice"></div>
+  </div>
+</div>
+
+<script>
+  function openLightbox(imgSrc, name, price) {
+    if (!imgSrc) return;
+    document.getElementById('lightboxImg').src = imgSrc;
+    document.getElementById('lightboxName').textContent = name;
+    document.getElementById('lightboxPrice').textContent = price;
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 </script>
 </body>
 </html>
