@@ -186,6 +186,12 @@
     .pd-stock-badge { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); text-align: center; margin-top: 0.4rem; }
     @media (max-width: 700px) { .pd-grid { grid-template-columns: 1fr; gap: 1.5rem; } }
 
+    /* GALLERY */
+    .pd-gallery {{ display: flex; gap: 0.5rem; margin-top: 0.5rem; }}
+    .pd-thumb {{ width: 64px; height: 80px; object-fit: cover; cursor: pointer; border: 2px solid transparent; transition: border-color 0.15s; opacity: 0.6; transition: all 0.15s; }}
+    .pd-thumb:hover {{ opacity: 1; }}
+    .pd-thumb.pd-thumb-active {{ border-color: var(--black); opacity: 1; }}
+
     /* NOTIF */
     .notif { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--black); color: white; padding: 0.7rem 1.5rem; font-family: 'DM Mono', monospace; font-size: 0.65rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; z-index: 400; transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); white-space: nowrap; }
     .notif.show { transform: translateX(-50%) translateY(0); }
@@ -338,9 +344,12 @@
   <div class="pd-inner">
     <button class="pd-back" onclick="closeProductDetail()">← Volver al catálogo</button>
     <div class="pd-grid">
-      <div class="pd-img-wrap" id="pdImgWrap">
-        <img id="pdImg" src="" alt="" style="display:none;" />
-        <div class="pd-badge" id="pdBadge" style="display:none">Best Seller</div>
+      <div>
+        <div class="pd-img-wrap" id="pdImgWrap">
+          <img id="pdImg" src="" alt="" style="display:none;" />
+          <div class="pd-badge" id="pdBadge" style="display:none">Best Seller</div>
+        </div>
+        <div class="pd-gallery" id="pdGallery" style="display:none;gap:0.5rem;margin-top:0.5rem;"></div>
       </div>
       <div class="pd-info">
         <p class="pd-cat" id="pdCat"></p>
@@ -538,7 +547,13 @@
     document.body.style.overflow = 'hidden';
   }
 
-  function closeProductDetail() {
+  function pdSwitchImg(thumb, src) {{
+    document.getElementById('pdImg').src = src;
+    document.querySelectorAll('.pd-thumb').forEach(t => t.classList.remove('pd-thumb-active'));
+    thumb.classList.add('pd-thumb-active');
+  }}
+
+  function closeProductDetail() {{
     document.getElementById('productDetail').classList.remove('open');
     document.body.style.overflow = '';
     currentProduct = null;

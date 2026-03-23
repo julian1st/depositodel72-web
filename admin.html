@@ -263,11 +263,19 @@
     <div class="modal-body">
       <div class="form-grid">
         <div class="field full">
-          <label>Foto del producto</label>
+          <label>Foto principal</label>
           <div class="img-upload" id="imgUploadArea">
             <input type="file" id="imgInput" accept="image/*" />
-            <div class="img-upload-text" id="imgUploadText">📷 Tocá para subir una foto</div>
+            <div class="img-upload-text" id="imgUploadText">📷 Tocá para subir la foto principal</div>
             <img class="img-preview hidden" id="imgPreview" />
+          </div>
+        </div>
+        <div class="field full">
+          <label>Foto secundaria <span style="color:var(--text-muted);font-weight:300;">(opcional)</span></label>
+          <div class="img-upload" id="imgUploadArea2">
+            <input type="file" id="imgInput2" accept="image/*" />
+            <div class="img-upload-text" id="imgUploadText2">📷 Tocá para subir una segunda foto</div>
+            <img class="img-preview hidden" id="imgPreview2" />
           </div>
         </div>
         <div class="field full">
@@ -337,6 +345,7 @@
   let editingId = null;
   let selectedTalles = [];
   let selectedImageFile = null;
+  let selectedImageFile2 = null;
   let allProductsAdmin = [];
 
   const TALLES_OPTIONS = ['XS','S','M','L','XL','XXL','28','30','32','34','36','38','40','42','44','Único'];
@@ -492,6 +501,17 @@
   }
 
   // IMAGE PREVIEW
+  document.getElementById('imgInput2').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    selectedImageFile2 = file;
+    const url = URL.createObjectURL(file);
+    const preview = document.getElementById('imgPreview2');
+    preview.src = url;
+    preview.classList.remove('hidden');
+    document.getElementById('imgUploadText2').textContent = '✓ ' + file.name;
+  });
+
   document.getElementById('imgInput').addEventListener('change', e => {
     const file = e.target.files[0];
     if (!file) return;
@@ -519,6 +539,11 @@
     document.getElementById('fDestacado').checked = producto ? producto.destacado : false;
     document.getElementById('fActivo').checked = producto ? producto.activo : true;
     document.getElementById('modalErr').classList.add('hidden');
+    selectedImageFile2 = null;
+    const preview2 = document.getElementById('imgPreview2');
+    const imgUrl2 = producto ? getImageUrl(producto.imagen_url_2) : null;
+    if (imgUrl2) { preview2.src = imgUrl2; preview2.classList.remove('hidden'); document.getElementById('imgUploadText2').textContent = 'Foto actual (subí otra para reemplazar)'; }
+    else { preview2.classList.add('hidden'); document.getElementById('imgUploadText2').textContent = '📷 Tocá para subir una segunda foto'; }
 
     const preview = document.getElementById('imgPreview');
     const imgUrl = producto ? getImageUrl(producto.imagen_url) : null;
@@ -553,6 +578,7 @@
     btn.textContent = 'GUARDANDO...'; btn.disabled = true;
 
     let imagen_url = editingId ? allProductsAdmin.find(p => p.id === editingId)?.imagen_url : null;
+    let imagen_url_2 = editingId ? allProductsAdmin.find(p => p.id === editingId)?.imagen_url_2 : null;
 
     // Upload image if selected
     if (selectedImageFile) {
@@ -561,6 +587,13 @@
       const { data: uploadData, error: uploadErr } = await sb.storage.from('productos').upload(fileName, selectedImageFile, { upsert: true });
       if (uploadErr) { errEl.textContent = 'Error subiendo imagen: ' + uploadErr.message; errEl.classList.remove('hidden'); btn.textContent = 'GUARDAR PRODUCTO'; btn.disabled = false; return; }
       imagen_url = uploadData.path;
+    }
+    if (selectedImageFile2) {
+      const ext2 = selectedImageFile2.name.split('.').pop();
+      const fileName2 = `${Date.now()}_2.${ext2}`;
+      const { data: uploadData2, error: uploadErr2 } = await sb.storage.from('productos').upload(fileName2, selectedImageFile2, { upsert: true });
+      if (uploadErr2) { errEl.textContent = 'Error subiendo imagen 2: ' + uploadErr2.message; errEl.classList.remove('hidden'); btn.textContent = 'GUARDAR PRODUCTO'; btn.disabled = false; return; }
+      imagen_url_2 = uploadData2.path;
     }
 
     const payload = {
@@ -573,7 +606,8 @@
       talles: selectedTalles,
       destacado: document.getElementById('fDestacado').checked,
       activo: document.getElementById('fActivo').checked,
-      imagen_url
+      imagen_url,
+      imagen_url_2
     };
 
     let error;
