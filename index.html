@@ -983,7 +983,7 @@
     const now = new Date();
     const diff = DROP_DATE - now;
     if (diff <= 0) {
-      document.getElementById('countdown').innerHTML = '<p style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:white;letter-spacing:0.1em;">¡YA ESTAMOS ABIERTOS!</p>';
+      document.getElementById('countdown').innerHTML = '<p style="font-family:Bebas Neue,sans-serif;font-size:2rem;color:white;letter-spacing:0.1em;">YA DISPONIBLE!</p>';
       return;
     }
     const days = Math.floor(diff / (1000*60*60*24));
@@ -1011,27 +1011,6 @@
     currentPrecio = e.target.value;
     renderProducts();
   });
-
-  // COUNTDOWN — cambiar esta fecha cuando sepas la apertura
-  const dropDate = new Date('2025-07-01T18:00:00-03:00');
-  function updateCountdown() {
-    const now = new Date();
-    const diff = dropDate - now;
-    if (diff <= 0) {
-      document.getElementById('countdown').innerHTML = '<p style="font-family:Bebas Neue;font-size:2rem;color:white;letter-spacing:0.1em;">¡YA DISPONIBLE!</p>';
-      return;
-    }
-    const days = Math.floor(diff / 86400000);
-    const hours = Math.floor((diff % 86400000) / 3600000);
-    const mins = Math.floor((diff % 3600000) / 60000);
-    const secs = Math.floor((diff % 60000) / 1000);
-    document.getElementById('cdDays').textContent = String(days).padStart(2,'0');
-    document.getElementById('cdHours').textContent = String(hours).padStart(2,'0');
-    document.getElementById('cdMins').textContent = String(mins).padStart(2,'0');
-    document.getElementById('cdSecs').textContent = String(secs).padStart(2,'0');
-  }
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
 
   // FAQ
   
