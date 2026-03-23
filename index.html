@@ -24,15 +24,15 @@
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-weight: 300; cursor: none; }
+    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-weight: 300; cursor: none; } html, body { margin: 0; padding: 0; }
 
     /* TOP BANNER */
     .top-banner { background: var(--black); color: white; text-align: center; padding: 0.5rem; font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; position: fixed; top: 0; left: 0; right: 0; z-index: 101; height: 32px; display: flex; align-items: center; justify-content: center; }
     @media (max-width: 768px) { .top-banner { font-size: 0.52rem; padding: 0.4rem; } }
 
     /* CURSOR */
-    .cursor { width: 8px; height: 8px; background: var(--black); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; transition: transform 0.1s; }
-    .cursor-ring { width: 32px; height: 32px; border: 1px solid var(--black); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; transition: all 0.08s ease; opacity: 0.3; }
+    .cursor { width: 10px; height: 10px; background: white; border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; transition: transform 0.1s; mix-blend-mode: difference; }
+    .cursor-ring { width: 32px; height: 32px; border: 1px solid white; border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; transition: all 0.08s ease; mix-blend-mode: difference; }
     @media (hover: none) { .cursor, .cursor-ring { display: none !important; } body { cursor: auto !important; } * { cursor: auto !important; } }
 
     /* NAV */
@@ -75,7 +75,7 @@
     .marquee-track span.dot { color: rgba(255,255,255,0.25); padding: 0 0.5rem; }
 
     /* SECTION */
-    section { padding: 4rem 2rem; }
+    section { padding: 4rem 2rem; } section:last-of-type { padding-bottom: 0; }
     .section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem; }
     .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.1em; color: var(--black); }
     .section-link { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); text-decoration: none; transition: color 0.15s; }
@@ -126,8 +126,8 @@
     .drop-cta:hover { border-color: white; }
 
     /* FAQ */
-    .faq-section { padding: 4rem 2rem; background: var(--bg2); border-top: 1px solid var(--border); }
-    .faq-inner { max-width: 720px; margin: 0 auto; }
+    .faq-section { padding: 4rem 2rem; background: var(--bg2); border-top: 1px solid var(--border); margin-bottom: 0; padding-bottom: 4rem; }
+    .faq-inner { max-width: 720px; margin: 0 auto; padding-bottom: 4rem; }
     .faq-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 0.1em; color: var(--black); margin-bottom: 2rem; }
     .faq-list { display: flex; flex-direction: column; }
     .faq-item { border-bottom: 1px solid var(--border); }
@@ -140,7 +140,7 @@
     @media (max-width: 768px) { .faq-section { padding: 2.5rem 1rem; } .drop-section { padding: 3rem 1rem; } .cd-num { font-size: 2rem; min-width: 60px; padding: 0.4rem 0.7rem; } }
 
     /* ABOUT */
-    .about-strip { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 4rem 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+    .about-strip { background: var(--bg2); border-top: 1px solid var(--border); padding: 4rem 2rem; margin-bottom: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
     .about-label { font-family: 'DM Mono', monospace; font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.8rem; }
     .about-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 0.95; color: var(--black); margin-bottom: 1.2rem; }
     .about-text { font-size: 0.85rem; color: var(--text-dim); line-height: 1.8; max-width: 440px; }
@@ -170,7 +170,7 @@
 
     /* FAQ */
     .faq-section { padding: 5rem 2rem; background: var(--bg2); }
-    .faq-inner { max-width: 720px; margin: 0 auto; }
+    .faq-inner { max-width: 720px; margin: 0 auto; padding-bottom: 4rem; }
     .faq-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.1em; color: var(--black); margin-bottom: 2rem; }
     .faq-list { display: flex; flex-direction: column; }
     .faq-item { border-top: 1px solid var(--border); }
@@ -183,7 +183,7 @@
     .faq-a.open { max-height: 200px; padding-bottom: 1.2rem; }
 
     /* FOOTER */
-    footer { background: var(--black); padding: 3rem 2rem; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 3rem; }
+    footer { background: var(--black); padding: 3rem 2rem; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 3rem; margin: 0; width: 100%; }
     .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.15em; color: white; margin-bottom: 0.8rem; display: block; }
     .footer-desc { font-size: 0.72rem; color: rgba(255,255,255,0.4); line-height: 1.7; max-width: 220px; }
     .footer-title { font-family: 'DM Mono', monospace; font-size: 0.55rem; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 0.8rem; }
@@ -329,8 +329,8 @@
     .drop-cta:hover { border-color: white; }
 
     /* FAQ */
-    .faq-section { padding: 4rem 2rem; background: var(--bg2); border-top: 1px solid var(--border); }
-    .faq-inner { max-width: 720px; margin: 0 auto; }
+    .faq-section { padding: 4rem 2rem; background: var(--bg2); border-top: 1px solid var(--border); margin-bottom: 0; padding-bottom: 4rem; }
+    .faq-inner { max-width: 720px; margin: 0 auto; padding-bottom: 4rem; }
     .faq-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 0.1em; color: var(--black); margin-bottom: 2rem; }
     .faq-list { display: flex; flex-direction: column; }
     .faq-item { border-bottom: 1px solid var(--border); }
@@ -367,7 +367,7 @@
 
     /* FAQ */
     .faq-section { padding: 5rem 2rem; background: var(--bg2); }
-    .faq-inner { max-width: 720px; margin: 0 auto; }
+    .faq-inner { max-width: 720px; margin: 0 auto; padding-bottom: 4rem; }
     .faq-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.1em; color: var(--black); margin-bottom: 2rem; }
     .faq-list { display: flex; flex-direction: column; }
     .faq-item { border-top: 1px solid var(--border); }
@@ -578,7 +578,7 @@
     </div>
   </div>
 </div>
-
+</div>
 <footer>
   <div>
     <span class="footer-logo">DEP.72</span>
