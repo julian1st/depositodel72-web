@@ -829,9 +829,23 @@
     pdSelectedTalle = null;
 
     const imgUrl = getImageUrl(p.imagen_url);
+    const imgUrl2 = getImageUrl(p.imagen_url_2);
     const pdImg = document.getElementById('pdImg');
     if (imgUrl) { pdImg.src = imgUrl; pdImg.style.display = 'block'; }
     else { pdImg.style.display = 'none'; }
+
+    // Gallery
+    const galleryEl = document.getElementById('pdGallery');
+    if (imgUrl2) {
+      galleryEl.style.display = 'flex';
+      galleryEl.innerHTML = `
+        <img src="${imgUrl}" onclick="pdSwitchImg(this,'${imgUrl}')" class="pd-thumb pd-thumb-active" />
+        <img src="${imgUrl2}" onclick="pdSwitchImg(this,'${imgUrl2}')" class="pd-thumb" />
+      `;
+    } else {
+      galleryEl.style.display = 'none';
+      galleryEl.innerHTML = '';
+    }
 
     document.getElementById('pdBadge').style.display = p.destacado ? 'block' : 'none';
     document.getElementById('pdCat').textContent = p.categoria.charAt(0).toUpperCase() + p.categoria.slice(1) + (p.marca ? ' · ' + p.marca : '');
