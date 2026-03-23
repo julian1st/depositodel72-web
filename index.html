@@ -227,7 +227,7 @@
     .pd-back:hover { color: var(--black); }
     .pd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; flex: 1; }
     .pd-img-wrap { background: var(--bg2); position: relative; }
-    .pd-img-wrap img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
+    .pd-img-wrap img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; aspect-ratio: 3/4; object-fit: cover; display: block; }
     .pd-badge { position: absolute; top: 0.8rem; left: 0.8rem; background: var(--black); color: white; font-family: 'DM Mono', monospace; font-size: 0.5rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.2rem 0.5rem; }
     .pd-info { padding-top: 0.5rem; }
     .pd-cat { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; }
@@ -497,8 +497,8 @@
 <div class="drop-section">
   <div class="drop-inner">
     <p class="drop-label">— Próximo evento</p>
-    <h2 class="drop-title">INVIERNO <span>2025</span></h2>
-    <p class="drop-sub">El depósito abre sus puertas. Stock nuevo, precios reales. Esquel, Chubut.</p>
+    <h2 class="drop-title">INVIERNO <span>2026</span></h2>
+    <p class="drop-sub">Nos volvemos a ver...... Stock nuevo, precios reales. Esquel, Chubut.</p>
     <div class="countdown" id="countdown">
       <div class="cd-item"><div class="cd-num" id="cdDays">--</div><div class="cd-label">días</div></div>
       <div class="cd-sep">:</div>
@@ -521,7 +521,7 @@
         <button class="faq-q" onclick="toggleFaq(this)">
           ¿Cómo funciona el envío? <span class="faq-icon">+</span>
         </button>
-        <div class="faq-a">Enviamos a todo el país por correo o encomienda. Coordinamos el envío por WhatsApp una vez confirmado el pago. El costo depende del destino y lo acordamos antes de confirmar.</div>
+        <div class="faq-a">Enviamos a todo el país por Andreani o Correo Argentino. Coordinamos el envío por WhatsApp una vez confirmado el pago. El costo depende del destino y lo acordamos antes de confirmar.</div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
@@ -539,7 +539,7 @@
         <button class="faq-q" onclick="toggleFaq(this)">
           ¿Las prendas son nuevas? <span class="faq-icon">+</span>
         </button>
-        <div class="faq-a">Sí, todas las prendas son originales del archivo de Leandro Sport — nunca usadas, guardadas en depósito. Muchas tienen etiquetas originales. El estado se especifica en cada producto.</div>
+        <div class="faq-a">Sí, todas las prendas son originales con etiquetas del archivo de Leandro Sport — nunca usadas, guardadas en perfectas condiciones en el depósito. Si la prenda tiene algun detalle sera especificado en su descripción.</div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
@@ -547,10 +547,14 @@
         </button>
         <div class="faq-a">Los drops son por temporada. Para estar al tanto de fechas y novedades seguinos en Instagram @depositodel72___ y activá las notificaciones.</div>
       </div>
-    </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          ¿Y el envio en Esquel y Trevelin? <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">Los envíos a Esquel y Trevelin tienen un costo fijo de $3500 (Esquel) y $7000 (Trevelin) respectivamente.</div>
+      </div>
   </div>
 </div>
-
 <div class="about-strip">
   <div>
     <p class="about-label">— Nuestra historia</p>
@@ -601,7 +605,7 @@
   </div>
 </footer>
 <div class="footer-bottom">
-  <p>© 2025 Depósito del 72 · Todos los derechos reservados</p>
+  <p>© 2026 Depósito del 72 · Todos los derechos reservados</p>
   <p>Hecho con ♥ en Esquel, Chubut</p>
 </div>
 
@@ -839,8 +843,8 @@
     if (imgUrl2) {
       galleryEl.style.display = 'flex';
       galleryEl.innerHTML = `
-        <img src="${imgUrl}" onclick="pdSwitchImg(this,'${imgUrl}')" class="pd-thumb pd-thumb-active" />
-        <img src="${imgUrl2}" onclick="pdSwitchImg(this,'${imgUrl2}')" class="pd-thumb" />
+        <img src="${imgUrl}" onclick="pdSwitchImg(this,'${imgUrl}')" class="pd-thumb pd-thumb-active" style="width:64px;height:80px;object-fit:cover;cursor:pointer;" />
+        <img src="${imgUrl2}" onclick="pdSwitchImg(this,'${imgUrl2}')" class="pd-thumb" style="width:64px;height:80px;object-fit:cover;cursor:pointer;" />
       `;
     } else {
       galleryEl.style.display = 'none';
@@ -956,7 +960,7 @@
   });
 
   // COUNTDOWN - set your drop date here
-  const DROP_DATE = new Date('2026-08-01T18:00:00-03:00');
+  const DROP_DATE = new Date('2026-08-05T18:00:00-03:00');
   function updateCountdown() {
     const now = new Date();
     const diff = DROP_DATE - now;
