@@ -631,6 +631,17 @@
   });
 
   // DELETE
+  async function confirmarVenta(id, nombre) {
+    if (!confirm(`¿Confirmar venta de "${nombre}"? El stock se pondrá en 0.`)) return;
+    const { error } = await sb.from('productos').update({ stock: 0, activo: false }).eq('id', id);
+    if (error) { showNotif('Error: ' + error.message, true); }
+    else {
+      showNotif('✓ Venta confirmada — ' + nombre);
+      await loadProductosAdmin();
+      await loadDashboard();
+    }
+  }
+
   async function deleteProducto(id, nombre) {
     if (!confirm(`¿Eliminar "${nombre}"? Esta acción no se puede deshacer.`)) return;
     const { error } = await sb.from('productos').delete().eq('id', id);

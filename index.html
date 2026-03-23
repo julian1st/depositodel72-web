@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <style>
     :root {
       --bg: #ffffff;
@@ -667,6 +668,9 @@
 </a>
 
 <script>
+  // EmailJS
+  emailjs.init('NgfEWLmd8CNVPwgwO');
+
   const { createClient } = supabase;
   const sb = createClient('https://alazhwetaskvkmzoypql.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsYXpod2V0YXNrdmttem95cHFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMTk1NDcsImV4cCI6MjA4OTU5NTU0N30.sHXIT35k8XaHqBBqrqwbRsanhojwhwmBWp2I8Mf1LLA');
 
@@ -753,10 +757,23 @@
 
   function checkout() {
     if (cart.length === 0) { showNotif('Tu carrito está vacío'); return; }
-    const lines = cart.map(i => '%E2%80%A2 ' + i.name + ' x' + i.qty + ' %E2%80%94 ' + formatPrice(i.price * i.qty)).join('%0A');
+
+    const lines = cart.map(i => '• ' + i.name + ' x' + i.qty + ' — ' + formatPrice(i.price * i.qty)).join('\n');
     const total = cart.reduce((a, i) => a + i.price * i.qty, 0);
-    const msg = 'Hola! Te escribo desde la web de Dep%C3%B3sito del 72.%0A%0AQuiero consultar por:%0A' + lines + '%0A%0ATotal: ' + formatPrice(total) + '%0A%0AQuedo a la espera, gracias!';
+    const now = new Date().toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' });
+
+    // Send email notification
+    emailjs.send('service_2bnzhur', 'template_bg7otgb', {
+      productos: lines,
+      total: formatPrice(total),
+      fecha: now
+    }).catch(err => console.log('Email error:', err));
+
+    // Open WhatsApp
+    const waLines = cart.map(i => '%E2%80%A2 ' + i.name + ' x' + i.qty + ' %E2%80%94 ' + formatPrice(i.price * i.qty)).join('%0A');
+    const msg = 'Hola! Te escribo desde la web de Dep%C3%B3sito del 72.%0A%0AQuiero consultar por:%0A' + waLines + '%0A%0ATotal: ' + formatPrice(total) + '%0A%0AQuedo a la espera, gracias!';
     window.open('https://wa.me/5492945418164?text=' + msg, '_blank');
+    showNotif('Consulta enviada!');
   }
 
   // PRODUCTS
