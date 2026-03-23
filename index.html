@@ -695,12 +695,12 @@
     document.getElementById('cartTotal').textContent = formatPrice(cartTotal);
     const envioMsg = document.getElementById('cartEnvioMsg');
     if (cartTotal >= 120000) {
-      envioMsg.innerHTML = '🚚 <strong>¡Envío gratis</strong> a todo el país!';
+      envioMsg.innerHTML = '🚚 ¡Envío gratis a todo el país!';
       envioMsg.style.color = '#25a244';
     } else {
       const falta = 120000 - cartTotal;
-      envioMsg.innerHTML = 'Esquel $3.000 · Trevelin $6.000 · Resto a coordinar<br><span style="color:#888">Sumá ' + formatPrice(falta) + ' más para envío gratis</span>';
-      envioMsg.style.color = 'var(--text-dim)';
+      envioMsg.innerHTML = 'Sumá ' + formatPrice(falta) + ' más para envío gratis';
+      envioMsg.style.color = 'var(--text-muted)';
     }
     const itemsEl = document.getElementById('cartItems');
     const emptyEl = document.getElementById('cartEmpty');
@@ -737,8 +737,8 @@
     n.textContent = msg; n.classList.add('show');
     setTimeout(() => n.classList.remove('show'), 2500);
   }
-  function openCart() { document.getElementById('cartDrawer').classList.add('open'); document.getElementById('cartOverlay').classList.add('open'); }
-  function closeCart() { document.getElementById('cartDrawer').classList.remove('open'); document.getElementById('cartOverlay').classList.remove('open'); }
+  function openCart() { document.getElementById('cartDrawer').classList.add('open'); document.getElementById('cartOverlay').classList.add('open'); document.getElementById('waFloat').style.display = 'none'; }
+  function closeCart() { document.getElementById('cartDrawer').classList.remove('open'); document.getElementById('cartOverlay').classList.remove('open'); document.getElementById('waFloat').style.display = 'flex'; }
   document.getElementById('cartBtn').addEventListener('click', openCart);
 
   function checkout() {
