@@ -154,6 +154,41 @@
     .notif.show { transform: translateX(-50%) translateY(0); }
     .product-card.hidden { display: none; }
 
+    /* PRODUCT DETAIL */
+    .product-detail-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 350; overflow-y: auto; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+    .product-detail-overlay.open { opacity: 1; pointer-events: all; }
+    .pd-inner { max-width: 1100px; margin: 0 auto; padding: 2rem 2.5rem; min-height: 100vh; display: flex; flex-direction: column; }
+    .pd-back { font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); background: none; border: none; cursor: none; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2.5rem; margin-top: 4rem; transition: color 0.15s; padding: 0; }
+    .pd-back:hover { color: var(--accent); }
+    .pd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; flex: 1; }
+    .pd-img-wrap { position: relative; background: var(--bg2); }
+    .pd-img-wrap img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
+    .pd-badge { position: absolute; top: 1rem; left: 1rem; background: var(--accent2); color: white; font-family: 'Barlow Condensed', sans-serif; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.25rem 0.6rem; }
+    .pd-info { padding-top: 1rem; }
+    .pd-cat { font-family: 'Barlow Condensed', sans-serif; font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 0.6rem; }
+    .pd-name { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 0.95; letter-spacing: 0.04em; color: var(--white); margin-bottom: 0.5rem; }
+    .pd-marca { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1.5rem; }
+    .pd-desc { font-size: 0.85rem; color: var(--text-dim); line-height: 1.8; margin-bottom: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+    .pd-price { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; color: var(--white); line-height: 1; margin-bottom: 2rem; }
+    .pd-price small { font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; color: var(--text-muted); vertical-align: middle; margin-right: 0.2rem; }
+    .pd-talle-title { font-family: 'Barlow Condensed', sans-serif; font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.6rem; }
+    .pd-talles { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 2rem; }
+    .pd-talle-btn { background: none; border: 1px solid var(--border); color: var(--text-dim); font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; padding: 0.5rem 1rem; cursor: none; transition: all 0.15s; }
+    .pd-talle-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .pd-talle-btn.selected { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 700; }
+    .pd-actions { display: flex; flex-direction: column; gap: 0.75rem; }
+    .pd-add-btn { background: var(--accent); border: none; color: var(--bg); padding: 1rem; font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 0.2em; cursor: none; transition: background 0.2s; }
+    .pd-add-btn:hover { background: var(--white); }
+    .pd-wa-btn { background: #25d366; border: none; color: white; padding: 1rem; font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 0.2em; cursor: none; transition: background 0.2s; }
+    .pd-wa-btn:hover { background: #1fb855; }
+    .pd-stock-badge { font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); text-align: center; margin-top: 0.5rem; }
+    @media (max-width: 700px) { .pd-grid { grid-template-columns: 1fr; gap: 2rem; } }
+
+    /* Make product cards clickable */
+    .product-img-wrap { cursor: zoom-in; }
+    .product-name { cursor: pointer; }
+    .product-name:hover { color: var(--accent); }
+
     /* LIGHTBOX */
     .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 400; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 1rem; }
     .lightbox.open { opacity: 1; pointer-events: all; }
@@ -517,6 +552,35 @@
   loadProducts();
 </script>
 
+<!-- PRODUCT DETAIL -->
+<div class="product-detail-overlay" id="productDetail">
+  <div class="pd-inner">
+    <button class="pd-back" onclick="closeProductDetail()">← Volver al catálogo</button>
+    <div class="pd-grid">
+      <div class="pd-img-wrap" id="pdImgWrap">
+        <img id="pdImg" src="" alt="" />
+        <div class="pd-badge" id="pdBadge" style="display:none">Best Seller</div>
+      </div>
+      <div class="pd-info">
+        <p class="pd-cat" id="pdCat"></p>
+        <h2 class="pd-name" id="pdName"></h2>
+        <p class="pd-marca" id="pdMarca"></p>
+        <p class="pd-desc" id="pdDesc"></p>
+        <div class="pd-price"><small>$</small><span id="pdPrice"></span></div>
+        <div id="pdTallesWrap">
+          <p class="pd-talle-title">Elegí tu talle</p>
+          <div class="pd-talles" id="pdTalles"></div>
+        </div>
+        <div class="pd-actions">
+          <button class="pd-add-btn" onclick="pdAddToCart()">+ AGREGAR AL CARRITO</button>
+          <button class="pd-wa-btn" onclick="pdWhatsapp()">💬 CONSULTAR POR WHATSAPP</button>
+        </div>
+        <p class="pd-stock-badge" id="pdStock"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
@@ -528,6 +592,90 @@
 </div>
 
 <script>
+  // PRODUCT DETAIL
+  let currentProduct = null;
+  let pdSelectedTalle = null;
+
+  function openProductDetail(productId) {
+    const p = allProducts.find(x => x.id === productId);
+    if (!p) return;
+    currentProduct = p;
+    pdSelectedTalle = null;
+
+    const imgUrl = getImageUrl(p.imagen_url);
+    const pdImg = document.getElementById('pdImg');
+    const pdImgWrap = document.getElementById('pdImgWrap');
+
+    if (imgUrl) {
+      pdImg.src = imgUrl;
+      pdImg.style.display = 'block';
+    } else {
+      pdImg.style.display = 'none';
+      pdImgWrap.style.background = 'var(--bg3)';
+    }
+
+    document.getElementById('pdBadge').style.display = p.destacado ? 'block' : 'none';
+    document.getElementById('pdCat').textContent = p.categoria.charAt(0).toUpperCase() + p.categoria.slice(1) + (p.marca ? ' · ' + p.marca : '');
+    document.getElementById('pdName').textContent = p.nombre;
+    document.getElementById('pdMarca').textContent = p.marca ? p.marca : '';
+    document.getElementById('pdDesc').textContent = p.descripcion || 'Prenda original del archivo de Leandro Sport. Stock único.';
+    document.getElementById('pdPrice').textContent = p.precio.toLocaleString('es-AR');
+    document.getElementById('pdStock').textContent = p.stock > 0 ? p.stock + ' unidad' + (p.stock > 1 ? 'es disponibles' : ' disponible') : 'Sin stock';
+
+    const tallesWrap = document.getElementById('pdTallesWrap');
+    const tallesContainer = document.getElementById('pdTalles');
+    if (p.talles && p.talles.length > 0) {
+      tallesWrap.style.display = 'block';
+      tallesContainer.innerHTML = p.talles.map(t =>
+        `<button class="pd-talle-btn" onclick="pdSelectTalle(this, '${t}')">${t}</button>`
+      ).join('');
+    } else {
+      tallesWrap.style.display = 'none';
+    }
+
+    document.getElementById('productDetail').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeProductDetail() {
+    document.getElementById('productDetail').classList.remove('open');
+    document.body.style.overflow = '';
+    currentProduct = null;
+    pdSelectedTalle = null;
+  }
+
+  function pdSelectTalle(btn, talle) {
+    document.querySelectorAll('.pd-talle-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    pdSelectedTalle = talle;
+  }
+
+  function pdAddToCart() {
+    if (!currentProduct) return;
+    const p = currentProduct;
+    const talles = p.talles || [];
+    if (talles.length > 0 && !pdSelectedTalle) { showNotif('¡Elegí un talle primero!'); return; }
+    const name = pdSelectedTalle ? p.nombre + ' — Talle ' + pdSelectedTalle : p.nombre;
+    const cartId = pdSelectedTalle ? p.id + pdSelectedTalle : p.id;
+    const imgUrl = getImageUrl(p.imagen_url);
+    const existing = cart.find(i => i.id === cartId);
+    if (existing) { existing.qty++; } else { cart.push({ id: cartId, name, price: p.precio, cat: p.categoria, img: imgUrl, qty: 1 }); }
+    updateCartUI();
+    showNotif('¡' + name + ' agregado!');
+    closeProductDetail();
+    openCart();
+  }
+
+  function pdWhatsapp() {
+    if (!currentProduct) return;
+    const p = currentProduct;
+    const talles = p.talles || [];
+    if (talles.length > 0 && !pdSelectedTalle) { showNotif('¡Elegí un talle primero!'); return; }
+    const talleText = pdSelectedTalle ? '%0ATalle: ' + pdSelectedTalle : '';
+    const msg = 'Hola! Te escribo desde la web de Dep%C3%B3sito del 72.%0A%0AQuiero consultar por:%0A%E2%80%A2 ' + p.nombre + talleText + '%0APrecio: $' + p.precio.toLocaleString('es-AR') + '%0A%0AQuedo a la espera, gracias!';
+    window.open('https://wa.me/5492945418164?text=' + msg, '_blank');
+  }
+
   function openLightbox(imgSrc, name, price) {
     if (!imgSrc) return;
     document.getElementById('lightboxImg').src = imgSrc;
