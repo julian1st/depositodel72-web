@@ -547,13 +547,13 @@
     document.body.style.overflow = 'hidden';
   }
 
-  function pdSwitchImg(thumb, src) {{
+  function pdSwitchImg(thumb, src) {
     document.getElementById('pdImg').src = src;
     document.querySelectorAll('.pd-thumb').forEach(t => t.classList.remove('pd-thumb-active'));
     thumb.classList.add('pd-thumb-active');
-  }}
+  }
 
-  function closeProductDetail() {{
+  function closeProductDetail() {
     document.getElementById('productDetail').classList.remove('open');
     document.body.style.overflow = '';
     currentProduct = null;
