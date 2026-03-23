@@ -498,12 +498,12 @@
       return `
         <div class="product-card" data-cat="${p.categoria}">
           <div class="product-img-wrap">
-            ${imgUrl ? `<img src="${imgUrl}" alt="${p.nombre}" loading="lazy" />` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--bg3);"><span style="font-family:'Bebas Neue';color:var(--text-muted);letter-spacing:0.1em;">${p.categoria.toUpperCase()}</span></div>`}
+            ${imgUrl ? `<img src="${imgUrl}" alt="${p.nombre}" loading="lazy" onclick="openProductDetail('${p.id}')" style="cursor:pointer;" />` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--bg3);cursor:pointer;" onclick="openProductDetail('${p.id}')"><span style="font-family:'Bebas Neue';color:var(--text-muted);letter-spacing:0.1em;">${p.categoria.toUpperCase()}</span></div>`}
             ${badge}${sinStock}${overlay}
           </div>
           <div class="product-info">
             <p class="product-cat">${p.categoria.charAt(0).toUpperCase() + p.categoria.slice(1)}${p.marca ? ' · ' + p.marca : ''}</p>
-            <p class="product-name">${p.nombre}</p>
+            <p class="product-name" onclick="openProductDetail('${p.id}')" style="cursor:pointer;">${p.nombre}</p>
             ${p.descripcion ? `<p class="product-detail">${p.descripcion}</p>` : ''}
             <div class="product-sizes">${talles}</div>
             <p class="product-price"><span class="currency">$</span>${p.precio.toLocaleString('es-AR')}</p>
