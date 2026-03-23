@@ -725,9 +725,15 @@
     });
   }
 
-  function addToCartItem(id, name, price, cat, img) {
+  function addToCartItem(id, name, price, cat, img, stock) {
     const existing = cart.find(i => i.id === id);
-    if (existing) { existing.qty++; } else { cart.push({ id, name, price, cat, img, qty: 1 }); }
+    const maxStock = stock || 1;
+    if (existing) {
+      if (existing.qty >= maxStock) { showNotif('Solo hay ' + maxStock + ' unidad' + (maxStock > 1 ? 'es' : '') + ' disponible'); return; }
+      existing.qty++;
+    } else {
+      cart.push({ id, name, price, cat, img, qty: 1, stock: maxStock });
+    }
     updateCartUI();
     showNotif(name + ' agregado');
   }
@@ -812,7 +818,7 @@
       return;
     }
     const imgUrl = getImageUrl(p.imagen_url);
-    addToCartItem(p.id, p.nombre, p.precio, p.categoria, imgUrl);
+    addToCartItem(p.id, p.nombre, p.precio, p.categoria, imgUrl, p.stock);
   }
 
   // PRODUCT DETAIL
@@ -823,9 +829,23 @@
     pdSelectedTalle = null;
 
     const imgUrl = getImageUrl(p.imagen_url);
+    const imgUrl2 = getImageUrl(p.imagen_url_2);
     const pdImg = document.getElementById('pdImg');
     if (imgUrl) { pdImg.src = imgUrl; pdImg.style.display = 'block'; }
     else { pdImg.style.display = 'none'; }
+
+    // Gallery
+    const galleryEl = document.getElementById('pdGallery');
+    if (imgUrl2) {
+      galleryEl.style.display = 'flex';
+      galleryEl.innerHTML = `
+        <img src="${imgUrl}" onclick="pdSwitchImg(this,'${imgUrl}')" class="pd-thumb pd-thumb-active" />
+        <img src="${imgUrl2}" onclick="pdSwitchImg(this,'${imgUrl2}')" class="pd-thumb" />
+      `;
+    } else {
+      galleryEl.style.display = 'none';
+      galleryEl.innerHTML = '';
+    }
 
     document.getElementById('pdBadge').style.display = p.destacado ? 'block' : 'none';
     document.getElementById('pdCat').textContent = p.categoria.charAt(0).toUpperCase() + p.categoria.slice(1) + (p.marca ? ' · ' + p.marca : '');
@@ -880,7 +900,7 @@
     const name = pdSelectedTalle ? p.nombre + ' — Talle ' + pdSelectedTalle : p.nombre;
     const cartId = pdSelectedTalle ? p.id + pdSelectedTalle : p.id;
     const imgUrl = getImageUrl(p.imagen_url);
-    addToCartItem(cartId, name, p.precio, p.categoria, imgUrl);
+    addToCartItem(cartId, name, p.precio, p.categoria, imgUrl, p.stock);
     closeProductDetail();
     openCart();
   }
