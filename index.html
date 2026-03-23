@@ -817,13 +817,6 @@
     renderProducts();
   }
 
-  let currentPrecio = 'todo';
-
-  document.getElementById('precioFilter').addEventListener('change', e => {
-    currentPrecio = e.target.value;
-    renderProducts();
-  });
-
   function renderProducts() {
     const grid = document.getElementById('productGrid');
     let filtered = currentFilter === 'todo' ? allProducts : allProducts.filter(p => p.categoria === currentFilter);
@@ -1014,8 +1007,6 @@
     if (!isOpen) { answer.classList.add('open'); btn.classList.add('open'); }
   }
 
-  // PRICE FILTER
-  let currentPrecio = 'todo';
   document.getElementById('precioFilter').addEventListener('change', e => {
     currentPrecio = e.target.value;
     renderProducts();
@@ -1043,12 +1034,7 @@
   setInterval(updateCountdown, 1000);
 
   // FAQ
-  function toggleFaq(btn) {
-    const item = btn.parentElement;
-    const isOpen = item.classList.contains('open');
-    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-    if (!isOpen) item.classList.add('open');
-  }
+  
 
   function filterAndScroll(filter) {
     currentFilter = filter;
