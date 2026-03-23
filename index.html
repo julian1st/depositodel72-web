@@ -126,12 +126,12 @@
     .faq-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 0.1em; color: var(--black); margin-bottom: 2rem; }
     .faq-list { display: flex; flex-direction: column; }
     .faq-item { border-bottom: 1px solid var(--border); }
-    .faq-q { width: 100%; background: none; border: none; padding: 1.2rem 0; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500; color: var(--black); text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; transition: color 0.15s; }
+    .faq-q { width: 100%; background: none; border: none; padding: 1.2rem 0; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500; color: var(--black); text-align: left; cursor: pointer !important; display: flex; justify-content: space-between; align-items: center; gap: 1rem; transition: color 0.15s; }
     .faq-q:hover { color: var(--text-dim); }
     .faq-icon { font-size: 1.2rem; font-weight: 300; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
     .faq-item.open .faq-icon { transform: rotate(45deg); }
-    .faq-a { font-size: 0.82rem; color: var(--text-dim); line-height: 1.8; padding-bottom: 1.2rem; display: none; }
-    .faq-item.open .faq-a { display: block; }
+    .faq-a { font-size: 0.82rem; color: var(--text-dim); line-height: 1.8; padding-bottom: 1.2rem; display: none; max-height: 0; overflow: hidden; }
+    .faq-item.open .faq-a { display: block; max-height: 500px; }
     @media (max-width: 768px) { .faq-section { padding: 2.5rem 1rem; } .drop-section { padding: 3rem 1rem; } .cd-num { font-size: 2rem; min-width: 60px; padding: 0.4rem 0.7rem; } }
 
     /* ABOUT */
@@ -329,12 +329,12 @@
     .faq-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 0.1em; color: var(--black); margin-bottom: 2rem; }
     .faq-list { display: flex; flex-direction: column; }
     .faq-item { border-bottom: 1px solid var(--border); }
-    .faq-q { width: 100%; background: none; border: none; padding: 1.2rem 0; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500; color: var(--black); text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; transition: color 0.15s; }
+    .faq-q { width: 100%; background: none; border: none; padding: 1.2rem 0; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500; color: var(--black); text-align: left; cursor: pointer !important; display: flex; justify-content: space-between; align-items: center; gap: 1rem; transition: color 0.15s; }
     .faq-q:hover { color: var(--text-dim); }
     .faq-icon { font-size: 1.2rem; font-weight: 300; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
     .faq-item.open .faq-icon { transform: rotate(45deg); }
-    .faq-a { font-size: 0.82rem; color: var(--text-dim); line-height: 1.8; padding-bottom: 1.2rem; display: none; }
-    .faq-item.open .faq-a { display: block; }
+    .faq-a { font-size: 0.82rem; color: var(--text-dim); line-height: 1.8; padding-bottom: 1.2rem; display: none; max-height: 0; overflow: hidden; }
+    .faq-item.open .faq-a { display: block; max-height: 500px; }
     @media (max-width: 768px) { .faq-section { padding: 2.5rem 1rem; } .drop-section { padding: 3rem 1rem; } .cd-num { font-size: 2rem; min-width: 60px; padding: 0.4rem 0.7rem; } }
 
     /* ABOUT */
@@ -540,69 +540,6 @@
           ¿Cuándo es el próximo drop? <span class="faq-icon">+</span>
         </button>
         <div class="faq-a">Los drops son por temporada. Para estar al tanto de fechas y novedades seguinos en Instagram @depositodel72___ y activá las notificaciones.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- DROP COUNTDOWN -->
-<div class="drop-section">
-  <div class="drop-inner">
-    <p class="drop-label">— Próximo evento</p>
-    <h2 class="drop-title">PRÓXIMO DROP</h2>
-    <p class="drop-sub">Nueva apertura del depósito. Stock fresco, precios reales.</p>
-    <div class="countdown" id="countdown">
-      <div class="cd-item"><span class="cd-num" id="cdDays">--</span><span class="cd-label">Días</span></div>
-      <div class="cd-sep">:</div>
-      <div class="cd-item"><span class="cd-num" id="cdHours">--</span><span class="cd-label">Horas</span></div>
-      <div class="cd-sep">:</div>
-      <div class="cd-item"><span class="cd-num" id="cdMins">--</span><span class="cd-label">Min</span></div>
-      <div class="cd-sep">:</div>
-      <div class="cd-item"><span class="cd-num" id="cdSecs">--</span><span class="cd-label">Seg</span></div>
-    </div>
-    <a href="https://instagram.com/depositodel72___" target="_blank" class="drop-cta">Seguinos para enterarte →</a>
-  </div>
-</div>
-
-<!-- FAQ -->
-<div class="faq-section">
-  <div class="faq-inner">
-    <h2 class="faq-title">PREGUNTAS FRECUENTES</h2>
-    <div class="faq-list">
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">
-          ¿Cómo funciona la compra?
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-a">Elegís la prenda, seleccionás el talle y nos escribís por WhatsApp. Coordinamos el pago por transferencia bancaria y una vez confirmado enviamos el paquete.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">
-          ¿A dónde hacen envíos?
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-a">Enviamos a todo el país por correo o encomienda desde Esquel, Chubut. El costo de envío se coordina por WhatsApp según el destino.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">
-          ¿Las prendas son nuevas?
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-a">Sí, todas las prendas son originales del archivo de Leandro Sport. Son prendas nuevas que quedaron en stock a lo largo de los años, sin uso previo.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">
-          ¿Hacen cambios o devoluciones?
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-a">Por la naturaleza del stock único, no hacemos cambios ni devoluciones. Te recomendamos consultar bien el talle antes de confirmar la compra.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">
-          ¿Cómo me entero de los próximos drops?
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-a">Seguinos en Instagram @depositodel72___ donde publicamos todas las novedades, aperturas y nuevas prendas disponibles.</div>
       </div>
     </div>
   </div>
@@ -978,7 +915,7 @@
   });
 
   // COUNTDOWN - set your drop date here
-  const DROP_DATE = new Date('2025-07-01T10:00:00-03:00');
+  const DROP_DATE = new Date('2026-08-01T18:00:00-03:00');
   function updateCountdown() {
     const now = new Date();
     const diff = DROP_DATE - now;
@@ -1000,11 +937,11 @@
 
   // FAQ
   function toggleFaq(btn) {
-    const answer = btn.nextElementSibling;
-    const isOpen = answer.classList.contains('open');
-    document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
-    document.querySelectorAll('.faq-q').forEach(q => q.classList.remove('open'));
-    if (!isOpen) { answer.classList.add('open'); btn.classList.add('open'); }
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
   }
 
   document.getElementById('precioFilter').addEventListener('change', e => {
