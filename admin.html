@@ -471,6 +471,7 @@
         <td>
           <div class="td-actions">
             <button class="btn-ghost" style="padding:0.3rem 0.7rem;font-size:0.6rem" onclick="editProducto('${p.id}')">Editar</button>
+            ${p.stock > 0 ? `<button class="btn-ghost" style="padding:0.3rem 0.7rem;font-size:0.6rem;border-color:#25a244;color:#25a244;" onclick="confirmarVenta('${p.id}', '${p.nombre.replace(/'/g,"\\'")}')">✓ Vendido</button>` : '<span style="font-size:0.6rem;color:var(--text-muted);font-family:\'Barlow Condensed\',sans-serif;letter-spacing:0.1em;">VENDIDO</span>'}
             <button class="btn-danger" onclick="deleteProducto('${p.id}', '${p.nombre.replace(/'/g,"\\'")}')">✕</button>
           </div>
         </td>
