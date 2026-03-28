@@ -220,12 +220,15 @@
     .mp-note { text-align: center; font-size: 0.6rem; color: var(--text-muted); font-family: 'DM Mono', monospace; letter-spacing: 0.05em; }
 
     /* PRODUCT DETAIL */
-    .product-detail-overlay { position: fixed; inset: 0; background: white; z-index: 350; overflow-y: auto; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+    .product-detail-overlay { position: fixed; inset: 0; background: #f5f4f0; z-index: 350; overflow-y: auto; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
     .product-detail-overlay.open { opacity: 1; pointer-events: all; }
-    .pd-inner { max-width: 1100px; margin: 0 auto; padding: 2rem; min-height: 100vh; display: flex; flex-direction: column; }
-    .pd-back { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 2rem; margin-top: 3.5rem; transition: color 0.15s; padding: 0; }
+    .pd-inner { max-width: none; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; }
+    .pd-topbar { display: flex; align-items: center; justify-content: space-between; padding: 0 2.5rem; height: 54px; border-bottom: 1px solid var(--border); background: white; position: sticky; top: 0; z-index: 10; }
+    .pd-topbar-brand { font-family: 'DM Mono', monospace; font-size: 0.54rem; letter-spacing: 0.35em; color: var(--text-muted); text-transform: uppercase; }
+    .pd-back { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; transition: color 0.15s; padding: 0; }
     .pd-back:hover { color: var(--black); }
-    .pd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; flex: 1; }
+    .pd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; flex: 1; }
+    .pd-img-col { background: #eceae5; padding: 3rem; display: flex; flex-direction: column; gap: 0.75rem; }
     .pd-img-wrap { background: var(--bg2); position: relative; }
     .pd-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.45); color: #fff; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s; }
     .pd-arrow:hover { background: rgba(0,0,0,0.75); }
@@ -233,11 +236,12 @@
     .pd-arrow.right { right: 10px; }
     .pd-img-wrap img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; aspect-ratio: 3/4; object-fit: cover; display: block; }
     .pd-badge { position: absolute; top: 0.8rem; left: 0.8rem; background: var(--black); color: white; font-family: 'DM Mono', monospace; font-size: 0.5rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.2rem 0.5rem; }
-    .pd-info { padding-top: 0.5rem; }
+    .pd-info { padding: 3rem 3.5rem; background: white; border-left: 1px solid var(--border); }
+    .pd-divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
     .pd-cat { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; }
     .pd-name { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem, 4vw, 3rem); line-height: 0.95; letter-spacing: 0.03em; color: var(--black); margin-bottom: 0.4rem; }
     .pd-marca { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1.2rem; padding-bottom: 1.2rem; border-bottom: 1px solid var(--border); }
-    .pd-desc { font-size: 0.82rem; color: var(--text-dim); line-height: 1.8; margin-bottom: 1.5rem; }
+    .pd-desc { font-size: 0.82rem; color: var(--text-dim); line-height: 1.8; margin-bottom: 1.5rem; padding-left: 0.85rem; border-left: 2px solid var(--border2); }
     .pd-price { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--black); line-height: 1; margin-bottom: 1.5rem; }
     .pd-price small { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--text-muted); vertical-align: middle; margin-right: 0.15rem; }
     .pd-talle-title { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; }
@@ -394,9 +398,11 @@
       .cart-drawer { width: 95%; max-height: 90vh; }
 
       /* PRODUCT DETAIL */
-      .pd-inner { padding: 1rem; }
-      .pd-back { margin-top: 3.5rem; margin-bottom: 1.2rem; }
-      .pd-grid { grid-template-columns: 1fr; gap: 1.2rem; }
+      .pd-topbar { padding: 0 1rem; }
+      .pd-topbar-brand { display: none; }
+      .pd-grid { grid-template-columns: 1fr; }
+      .pd-img-col { padding: 1rem 1rem 0.5rem; }
+      .pd-info { padding: 1.5rem 1rem 2rem; border-left: none; border-top: 1px solid var(--border); }
       .pd-name { font-size: 2rem; }
       .pd-price { font-size: 2rem; }
       .pd-add-btn, .pd-wa-btn { padding: 0.85rem; font-size: 0.62rem; }
@@ -607,22 +613,26 @@
 <!-- PRODUCT DETAIL -->
 <div class="product-detail-overlay" id="productDetail">
   <div class="pd-inner">
-    <button class="pd-back" onclick="closeProductDetail()">← Volver al catálogo</button>
+    <div class="pd-topbar">
+      <button class="pd-back" onclick="closeProductDetail()">← Volver al catálogo</button>
+      <span class="pd-topbar-brand">Depósito del 72</span>
+    </div>
     <div class="pd-grid">
-      <div>
+      <div class="pd-img-col">
         <div class="pd-img-wrap" id="pdImgWrap">
           <img id="pdImg" src="" alt="" style="display:none;" />
           <div class="pd-badge" id="pdBadge" style="display:none">Best Seller</div>
           <button class="pd-arrow left" id="pdArrowLeft" onclick="pdArrowNav(-1)" style="display:none;">&#8592;</button>
           <button class="pd-arrow right" id="pdArrowRight" onclick="pdArrowNav(1)" style="display:none;">&#8594;</button>
         </div>
-        <div class="pd-gallery" id="pdGallery" style="display:none;gap:0.5rem;margin-top:0.5rem;"></div>
+        <div class="pd-gallery" id="pdGallery" style="display:none;gap:0.5rem;"></div>
       </div>
       <div class="pd-info">
         <p class="pd-cat" id="pdCat"></p>
         <h2 class="pd-name" id="pdName"></h2>
         <p class="pd-marca" id="pdMarca"></p>
         <p class="pd-desc" id="pdDesc"></p>
+        <div class="pd-divider"></div>
         <div class="pd-price"><small>$</small><span id="pdPrice"></span></div>
         <div id="pdTallesWrap" style="display:none;">
           <p class="pd-talle-title">Elegí tu talle</p>
