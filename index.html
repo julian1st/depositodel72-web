@@ -26,16 +26,13 @@
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-weight: 300; cursor: none; } html, body { margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-weight: 300; cursor: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'><line x1='10' y1='0' x2='10' y2='7' stroke='%23111' stroke-width='1.5'/><line x1='10' y1='13' x2='10' y2='20' stroke='%23111' stroke-width='1.5'/><line x1='0' y1='10' x2='7' y2='10' stroke='%23111' stroke-width='1.5'/><line x1='13' y1='10' x2='20' y2='10' stroke='%23111' stroke-width='1.5'/><circle cx='10' cy='10' r='2' fill='none' stroke='%23111' stroke-width='1.5'/></svg>") 10 10, crosshair; } html, body { margin: 0; padding: 0; }
 
     /* TOP BANNER */
     .top-banner { background: var(--black); color: white; text-align: center; padding: 0.5rem; font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; position: fixed; top: 0; left: 0; right: 0; z-index: 101; height: 32px; display: flex; align-items: center; justify-content: center; }
     @media (max-width: 768px) { .top-banner { font-size: 0.52rem; padding: 0.4rem; } }
 
     /* CURSOR */
-    .cursor { width: 10px; height: 10px; background: white; border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; transition: transform 0.1s; mix-blend-mode: difference; }
-    .cursor-ring { width: 32px; height: 32px; border: 1px solid white; border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; transition: all 0.08s ease; mix-blend-mode: difference; }
-    @media (hover: none) { .cursor, .cursor-ring { display: none !important; } body { cursor: auto !important; } * { cursor: auto !important; } }
 
     /* NAV */
     nav { position: fixed; top: 32px; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.96); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; height: 52px; }
@@ -52,7 +49,7 @@
     .nav-search { display: flex; align-items: center; gap: 0.4rem; background: var(--bg2); border: 1px solid var(--border); padding: 0.35rem 0.8rem; }
     .nav-search input { background: none; border: none; outline: none; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.72rem; width: 130px; }
     .nav-search input::placeholder { color: var(--text-muted); }
-    .cart-btn { background: var(--black); border: none; color: white; padding: 0.45rem 1rem; font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: none; transition: all 0.15s; display: flex; align-items: center; gap: 0.5rem; }
+    .cart-btn { background: var(--black); border: none; color: white; padding: 0.45rem 1rem; font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 0.5rem; }
     .cart-btn:hover { background: #333; }
     .cart-count { background: var(--accent2); color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 0.58rem; display: flex; align-items: center; justify-content: center; font-weight: 600; }
 
@@ -65,9 +62,9 @@
     .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(4rem, 9vw, 8rem); line-height: 0.9; letter-spacing: 0.02em; color: white; margin-bottom: 1.2rem; opacity: 0; animation: fadeUp 0.7s ease 0.5s forwards; }
     .hero-sub { font-size: 0.82rem; color: rgba(255,255,255,0.75); line-height: 1.7; margin-bottom: 2rem; max-width: 360px; opacity: 0; animation: fadeUp 0.7s ease 0.7s forwards; }
     .hero-actions { display: flex; gap: 0.8rem; opacity: 0; animation: fadeUp 0.7s ease 0.9s forwards; }
-    .btn-primary { background: white; color: var(--black); border: none; padding: 0.8rem 1.8rem; font-family: 'DM Mono', monospace; font-size: 0.65rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; cursor: none; transition: all 0.15s; display: inline-block; }
+    .btn-primary { background: white; color: var(--black); border: none; padding: 0.8rem 1.8rem; font-family: 'DM Mono', monospace; font-size: 0.65rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: all 0.15s; display: inline-block; }
     .btn-primary:hover { background: var(--bg2); }
-    .btn-ghost-hero { background: transparent; color: white; border: 1px solid rgba(255,255,255,0.4); padding: 0.8rem 1.8rem; font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; cursor: none; transition: all 0.15s; display: inline-block; }
+    .btn-ghost-hero { background: transparent; color: white; border: 1px solid rgba(255,255,255,0.4); padding: 0.8rem 1.8rem; font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: all 0.15s; display: inline-block; }
     .btn-ghost-hero:hover { border-color: white; }
 
     /* MARQUEE */
@@ -85,13 +82,13 @@
 
     /* FILTERS */
     .filter-bar { display: flex; gap: 0.4rem; margin-bottom: 2rem; flex-wrap: wrap; }
-    .filter-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 0.35rem 0.9rem; font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: none; transition: all 0.12s; }
+    .filter-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 0.35rem 0.9rem; font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: all 0.12s; }
     .filter-btn:hover { border-color: var(--black); color: var(--black); }
     .filter-btn.active { background: var(--black); border-color: var(--black); color: white; }
 
     /* PRODUCT GRID */
     .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1px; background: var(--border); min-height: 200px; }
-    .product-card { background: var(--bg); position: relative; overflow: hidden; cursor: none; }
+    .product-card { background: var(--bg); position: relative; overflow: hidden; cursor: pointer; }
     .product-img-wrap { aspect-ratio: 3/4; overflow: hidden; background: var(--bg2); position: relative; cursor: pointer; }
     .product-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease, opacity 0.3s ease; opacity: 0; }
     .product-img-wrap img.loaded { opacity: 1; }
@@ -99,7 +96,7 @@
     .product-badge { position: absolute; top: 0.7rem; left: 0.7rem; background: var(--black); color: white; font-family: 'DM Mono', monospace; font-size: 0.5rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.2rem 0.5rem; }
     .product-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); padding: 0.8rem; transform: translateY(100%); transition: transform 0.25s ease; border-top: 1px solid var(--border); }
     .product-card:hover .product-overlay { transform: translateY(0); }
-    .add-cart-btn { width: 100%; background: var(--black); border: none; color: white; padding: 0.6rem; font-family: 'DM Mono', monospace; font-size: 0.6rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; cursor: none; transition: background 0.15s; }
+    .add-cart-btn { width: 100%; background: var(--black); border: none; color: white; padding: 0.6rem; font-family: 'DM Mono', monospace; font-size: 0.6rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: background 0.15s; }
     .add-cart-btn:hover { background: #333; }
     .product-info { padding: 0.8rem 0.8rem 0.9rem; }
     .product-cat { font-family: 'DM Mono', monospace; font-size: 0.52rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.2rem; }
@@ -203,7 +200,7 @@
     .cart-overlay.open { opacity: 1; pointer-events: all; }
     .cart-header { padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
     .cart-header h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.12em; color: var(--black); }
-    .cart-close { background: none; border: 1px solid var(--border); color: var(--text); width: 30px; height: 30px; cursor: none; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+    .cart-close { background: none; border: 1px solid var(--border); color: var(--text); width: 30px; height: 30px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
     .cart-close:hover { border-color: var(--accent2); color: var(--accent2); }
     .cart-items { flex: 1; overflow-y: auto; padding: 1rem 2rem; }
     .cart-empty { text-align: center; padding: 3rem 0; color: var(--text-muted); font-size: 0.75rem; font-family: 'DM Mono', monospace; letter-spacing: 0.1em; }
@@ -212,13 +209,13 @@
     .cart-item-name { font-size: 0.8rem; font-weight: 500; color: var(--black); margin-bottom: 0.15rem; }
     .cart-item-detail { font-size: 0.65rem; color: var(--text-muted); }
     .cart-item-price { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; color: var(--black); white-space: nowrap; }
-    .cart-item-remove { background: none; border: none; color: var(--text-muted); cursor: none; font-size: 0.65rem; margin-top: 0.2rem; padding: 0; transition: color 0.12s; display: block; }
+    .cart-item-remove { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.65rem; margin-top: 0.2rem; padding: 0; transition: color 0.12s; display: block; }
     .cart-item-remove:hover { color: var(--accent2); }
     .cart-footer { padding: 1.5rem 2rem; border-top: 1px solid var(--border); background: var(--bg2); }
     .cart-total { display: flex; justify-content: space-between; margin-bottom: 1rem; align-items: flex-end; }
     .cart-total span:first-child { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); }
     .cart-total-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--black); }
-    .checkout-btn { width: 100%; background: #25d366; border: none; color: white; padding: 0.9rem; font-family: 'DM Mono', monospace; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; cursor: none; transition: background 0.15s; margin-bottom: 0.5rem; }
+    .checkout-btn { width: 100%; background: #25d366; border: none; color: white; padding: 0.9rem; font-family: 'DM Mono', monospace; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: background 0.15s; margin-bottom: 0.5rem; }
     .checkout-btn:hover { background: #1fb855; }
     .mp-note { text-align: center; font-size: 0.6rem; color: var(--text-muted); font-family: 'DM Mono', monospace; letter-spacing: 0.05em; }
 
@@ -226,7 +223,7 @@
     .product-detail-overlay { position: fixed; inset: 0; background: white; z-index: 350; overflow-y: auto; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
     .product-detail-overlay.open { opacity: 1; pointer-events: all; }
     .pd-inner { max-width: 1100px; margin: 0 auto; padding: 2rem; min-height: 100vh; display: flex; flex-direction: column; }
-    .pd-back { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); background: none; border: none; cursor: none; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 2rem; margin-top: 3.5rem; transition: color 0.15s; padding: 0; }
+    .pd-back { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 2rem; margin-top: 3.5rem; transition: color 0.15s; padding: 0; }
     .pd-back:hover { color: var(--black); }
     .pd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; flex: 1; }
     .pd-img-wrap { background: var(--bg2); position: relative; }
@@ -245,7 +242,7 @@
     .pd-price small { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--text-muted); vertical-align: middle; margin-right: 0.15rem; }
     .pd-talle-title { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; }
     .pd-talles { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1.5rem; }
-    .pd-talle-btn { background: none; border: 1px solid var(--border); color: var(--text-dim); font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; padding: 0.5rem 0.9rem; cursor: none; transition: all 0.12s; }
+    .pd-talle-btn { background: none; border: 1px solid var(--border); color: var(--text-dim); font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; padding: 0.5rem 0.9rem; cursor: pointer; transition: all 0.12s; }
     .pd-talle-btn:hover { border-color: var(--black); color: var(--black); }
     .pd-talle-btn.selected { background: var(--black); border-color: var(--black); color: white; }
     .pd-actions { display: flex; flex-direction: column; gap: 0.6rem; }
@@ -424,8 +421,6 @@
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
 
 <div class="top-banner">🚚 Envío gratis en compras mayores a $120.000</div>
 <nav>
@@ -663,23 +658,7 @@
   const { createClient } = supabase;
   const sb = createClient('https://alazhwetaskvkmzoypql.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsYXpod2V0YXNrdmttem95cHFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMTk1NDcsImV4cCI6MjA4OTU5NTU0N30.sHXIT35k8XaHqBBqrqwbRsanhojwhwmBWp2I8Mf1LLA');
 
-  // CURSOR
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
-  let mx = 0, my = 0, rx = 0, ry = 0;
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    cursor.style.left = mx - 4 + 'px';
-    cursor.style.top = my - 4 + 'px';
-  });
-  (function animRing() {
-    rx += (mx - rx - 16) * 0.12;
-    ry += (my - ry - 16) * 0.12;
-    ring.style.left = rx + 'px';
-    ring.style.top = ry + 'px';
-    requestAnimationFrame(animRing);
-  })();
-  setTimeout(() => document.getElementById('heroBg').classList.add('loaded'), 100);
+setTimeout(() => document.getElementById('heroBg').classList.add('loaded'), 100);
 
   // CART
   let cart = [];
