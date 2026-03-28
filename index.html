@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Depósito del 72 — Ropa Vintage Original</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://alazhwetaskvkmzoypql.supabase.co" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
@@ -92,7 +93,8 @@
     .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1px; background: var(--border); min-height: 200px; }
     .product-card { background: var(--bg); position: relative; overflow: hidden; cursor: none; }
     .product-img-wrap { aspect-ratio: 3/4; overflow: hidden; background: var(--bg2); position: relative; cursor: pointer; }
-    .product-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .product-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease, opacity 0.3s ease; opacity: 0; }
+    .product-img-wrap img.loaded { opacity: 1; }
     .product-card:hover .product-img-wrap img { transform: scale(1.04); }
     .product-badge { position: absolute; top: 0.7rem; left: 0.7rem; background: var(--black); color: white; font-family: 'DM Mono', monospace; font-size: 0.5rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.2rem 0.5rem; }
     .product-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); padding: 0.8rem; transform: translateY(100%); transition: transform 0.25s ease; border-top: 1px solid var(--border); }
@@ -228,6 +230,10 @@
     .pd-back:hover { color: var(--black); }
     .pd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; flex: 1; }
     .pd-img-wrap { background: var(--bg2); position: relative; }
+    .pd-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.45); color: #fff; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s; }
+    .pd-arrow:hover { background: rgba(0,0,0,0.75); }
+    .pd-arrow.left { left: 10px; }
+    .pd-arrow.right { right: 10px; }
     .pd-img-wrap img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; aspect-ratio: 3/4; object-fit: cover; display: block; }
     .pd-badge { position: absolute; top: 0.8rem; left: 0.8rem; background: var(--black); color: white; font-family: 'DM Mono', monospace; font-size: 0.5rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.2rem 0.5rem; }
     .pd-info { padding-top: 0.5rem; }
@@ -494,25 +500,6 @@
   </div>
 </section>
 
-<!-- DROP COUNTDOWN -->
-<div class="drop-section">
-  <div class="drop-inner">
-    <p class="drop-label">— Próximo evento</p>
-    <h2 class="drop-title">INVIERNO <span>2026</span></h2>
-    <p class="drop-sub">Nos volvemos a ver...... Stock nuevo, precios reales. Esquel, Chubut.</p>
-    <div class="countdown" id="countdown">
-      <div class="cd-item"><div class="cd-num" id="cdDays">--</div><div class="cd-label">días</div></div>
-      <div class="cd-sep">:</div>
-      <div class="cd-item"><div class="cd-num" id="cdHours">--</div><div class="cd-label">horas</div></div>
-      <div class="cd-sep">:</div>
-      <div class="cd-item"><div class="cd-num" id="cdMins">--</div><div class="cd-label">min</div></div>
-      <div class="cd-sep">:</div>
-      <div class="cd-item"><div class="cd-num" id="cdSecs">--</div><div class="cd-label">seg</div></div>
-    </div>
-    <a href="https://instagram.com/depositodel72___" target="_blank" class="drop-cta">Seguir en Instagram para enterarse →</a>
-  </div>
-</div>
-
 <!-- FAQ -->
 <div class="faq-section">
   <div class="faq-inner">
@@ -631,6 +618,8 @@
         <div class="pd-img-wrap" id="pdImgWrap">
           <img id="pdImg" src="" alt="" style="display:none;" />
           <div class="pd-badge" id="pdBadge" style="display:none">Best Seller</div>
+          <button class="pd-arrow left" id="pdArrowLeft" onclick="pdArrowNav(-1)" style="display:none;">&#8592;</button>
+          <button class="pd-arrow right" id="pdArrowRight" onclick="pdArrowNav(1)" style="display:none;">&#8594;</button>
         </div>
         <div class="pd-gallery" id="pdGallery" style="display:none;gap:0.5rem;margin-top:0.5rem;"></div>
       </div>
@@ -782,6 +771,8 @@
   let currentPrecio = 'todo';
   let currentProduct = null;
   let pdSelectedTalle = null;
+  let pdImages = [];
+  let pdCurrentImg = 0;
 
   function getImageUrl(path) {
     if (!path) return null;
@@ -809,7 +800,12 @@
     if (filtered.length === 0) { grid.innerHTML = '<div class="loading-grid">No hay productos en esta categoría.</div>'; return; }
     grid.innerHTML = filtered.map(p => {
       const imgUrl = getImageUrl(p.imagen_url);
-      const talles = (p.talles || []).map(t => `<span class="size-tag">${t}</span>`).join('');
+      const tallesStock = p.talles_stock || {};
+      const tallesList = p.talles && p.talles.length > 0 ? p.talles : Object.keys(tallesStock);
+      const talles = tallesList.map(t => {
+        const stock = tallesStock[t] !== undefined ? tallesStock[t] : 1;
+        return `<span class="size-tag" style="${stock === 0 ? 'opacity:0.35;text-decoration:line-through;' : ''}">${t}</span>`;
+      }).join('');
       const badge = p.destacado ? '<div class="product-badge">Best Seller</div>' : '';
       const envioGratis = p.precio >= 120000 ? '<div class="envio-badge">🚚 Envío gratis</div>' : '';
       const sinStock = p.stock === 0 ? '<div class="no-stock">Sin Stock</div>' : '';
@@ -817,7 +813,7 @@
       return `
         <div class="product-card" data-cat="${p.categoria}">
           <div class="product-img-wrap" onclick="openProductDetail('${p.id}')">
-            ${imgUrl ? `<img src="${imgUrl}" alt="${p.nombre}" loading="lazy" />` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"><span style="font-family:'DM Mono';font-size:0.6rem;color:var(--text-muted);letter-spacing:0.1em;">${p.categoria.toUpperCase()}</span></div>`}
+            ${imgUrl ? `<img src="${imgUrl}" alt="${p.nombre}" loading="lazy" decoding="async" onload="this.classList.add('loaded')" />` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"><span style="font-family:'DM Mono';font-size:0.6rem;color:var(--text-muted);letter-spacing:0.1em;">${p.categoria.toUpperCase()}</span></div>`}
             ${badge}${sinStock}${envioGratis}${overlay}
           </div>
           <div class="product-info">
@@ -851,17 +847,25 @@
 
     const imgUrl = getImageUrl(p.imagen_url);
     const imgUrl2 = getImageUrl(p.imagen_url_2);
+    pdImages = [imgUrl, imgUrl2].filter(Boolean);
+    pdCurrentImg = 0;
     const pdImg = document.getElementById('pdImg');
     if (imgUrl) { pdImg.src = imgUrl; pdImg.style.display = 'block'; }
     else { pdImg.style.display = 'none'; }
 
-    // Gallery
+    // Arrows
+    const arrowL = document.getElementById('pdArrowLeft');
+    const arrowR = document.getElementById('pdArrowRight');
+    if (pdImages.length > 1) { arrowL.style.display = 'flex'; arrowR.style.display = 'flex'; }
+    else { arrowL.style.display = 'none'; arrowR.style.display = 'none'; }
+
+    // Gallery (thumbnails)
     const galleryEl = document.getElementById('pdGallery');
     if (imgUrl2) {
       galleryEl.style.display = 'flex';
       galleryEl.innerHTML = `
-        <img src="${imgUrl}" onclick="pdSwitchImg(this,'${imgUrl}')" class="pd-thumb pd-thumb-active" style="width:64px;height:80px;object-fit:cover;cursor:pointer;" />
-        <img src="${imgUrl2}" onclick="pdSwitchImg(this,'${imgUrl2}')" class="pd-thumb" style="width:64px;height:80px;object-fit:cover;cursor:pointer;" />
+        <img src="${imgUrl}" onclick="pdSwitchImg(this,'${imgUrl}',0)" class="pd-thumb pd-thumb-active" style="width:64px;height:80px;object-fit:cover;cursor:pointer;" />
+        <img src="${imgUrl2}" onclick="pdSwitchImg(this,'${imgUrl2}',1)" class="pd-thumb" style="width:64px;height:80px;object-fit:cover;cursor:pointer;" />
       `;
     } else {
       galleryEl.style.display = 'none';
@@ -880,9 +884,19 @@
 
     const tallesWrap = document.getElementById('pdTallesWrap');
     const tallesContainer = document.getElementById('pdTalles');
-    if (p.talles && p.talles.length > 0) {
+    const tallesStock = p.talles_stock || {};
+    const tallesArr = p.talles && p.talles.length > 0 ? p.talles : Object.keys(tallesStock);
+    if (tallesArr.length > 0) {
       tallesWrap.style.display = 'block';
-      tallesContainer.innerHTML = p.talles.map(t => `<button class="pd-talle-btn" onclick="pdSelectTalle(this,'${t}')">${t}</button>`).join('');
+      tallesContainer.innerHTML = tallesArr.map(t => {
+        const stock = tallesStock[t] !== undefined ? tallesStock[t] : 1;
+        const sinStock = stock === 0;
+        return `<button class="pd-talle-btn${sinStock ? ' talle-sin-stock' : ''}"
+          onclick="${sinStock ? '' : `pdSelectTalle(this,'${t}')`}"
+          style="${sinStock ? 'opacity:0.35;text-decoration:line-through;cursor:not-allowed;' : ''}"
+          title="${sinStock ? 'Sin stock' : stock + ' disponible' + (stock > 1 ? 's' : '')}"
+          ${sinStock ? 'disabled' : ''}>${t}${stock > 1 ? ` (${stock})` : ''}</button>`;
+      }).join('');
     } else {
       tallesWrap.style.display = 'none';
     }
@@ -895,10 +909,18 @@
     document.body.style.overflow = 'hidden';
   }
 
-  function pdSwitchImg(thumb, src) {
+  function pdSwitchImg(thumb, src, idx) {
+    pdCurrentImg = idx ?? 0;
     document.getElementById('pdImg').src = src;
     document.querySelectorAll('.pd-thumb').forEach(t => t.classList.remove('pd-thumb-active'));
     thumb.classList.add('pd-thumb-active');
+  }
+
+  function pdArrowNav(dir) {
+    if (pdImages.length < 2) return;
+    pdCurrentImg = (pdCurrentImg + dir + pdImages.length) % pdImages.length;
+    document.getElementById('pdImg').src = pdImages[pdCurrentImg];
+    document.querySelectorAll('.pd-thumb').forEach((t, i) => t.classList.toggle('pd-thumb-active', i === pdCurrentImg));
   }
 
   function closeProductDetail() {
@@ -917,11 +939,13 @@
   function pdAddToCart() {
     if (!currentProduct) return;
     const p = currentProduct;
-    if (p.talles && p.talles.length > 0 && !pdSelectedTalle) { showNotif('Elegí un talle primero'); return; }
+    const tallesArr = p.talles && p.talles.length > 0 ? p.talles : Object.keys(p.talles_stock || {});
+    if (tallesArr.length > 0 && !pdSelectedTalle) { showNotif('Elegí un talle primero'); return; }
+    const talleStock = pdSelectedTalle && p.talles_stock ? (p.talles_stock[pdSelectedTalle] || 1) : p.stock;
     const name = pdSelectedTalle ? p.nombre + ' — Talle ' + pdSelectedTalle : p.nombre;
     const cartId = pdSelectedTalle ? p.id + pdSelectedTalle : p.id;
     const imgUrl = getImageUrl(p.imagen_url);
-    addToCartItem(cartId, name, p.precio, p.categoria, imgUrl, p.stock);
+    addToCartItem(cartId, name, p.precio, p.categoria, imgUrl, talleStock);
     closeProductDetail();
     openCart();
   }
@@ -976,26 +1000,6 @@
     }
   });
 
-  // COUNTDOWN - set your drop date here
-  const DROP_DATE = new Date('2026-08-05T18:00:00-03:00');
-  function updateCountdown() {
-    const now = new Date();
-    const diff = DROP_DATE - now;
-    if (diff <= 0) {
-      document.getElementById('countdown').innerHTML = '<p style="font-family:Bebas Neue,sans-serif;font-size:2rem;color:white;letter-spacing:0.1em;">YA DISPONIBLE!</p>';
-      return;
-    }
-    const days = Math.floor(diff / (1000*60*60*24));
-    const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
-    const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
-    const secs = Math.floor((diff % (1000*60)) / 1000);
-    document.getElementById('cdDays').textContent = String(days).padStart(2,'0');
-    document.getElementById('cdHours').textContent = String(hours).padStart(2,'0');
-    document.getElementById('cdMins').textContent = String(mins).padStart(2,'0');
-    document.getElementById('cdSecs').textContent = String(secs).padStart(2,'0');
-  }
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
 
   // FAQ
   function toggleFaq(btn) {
